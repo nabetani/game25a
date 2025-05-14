@@ -3,4 +3,8 @@ export const enum Phase {
     Playing = 2,
     GameOver = 3,
     Cleared = 4,
+}export interface PhaseProps {
+  phase: Phase;
+  setPhase: (_: Phase) => void;
 }
+

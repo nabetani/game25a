@@ -1,12 +1,7 @@
 import React from 'react';
-import { Phase } from './constants';
+import { Phase, PhaseProps } from './constants';
 
-interface StageSelProps {
-  phase: Phase;
-  setPhase: (_:Phase)=>void;
-}
-
-const StageSel: React.FC<StageSelProps> = ({ phase, setPhase }) => {
+const StageSel: React.FC<PhaseProps> = ({ phase, setPhase }) => {
   return (
     <div>
       <h1>Stage Selection</h1>
