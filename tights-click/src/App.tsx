@@ -3,6 +3,7 @@ import './App.css';
 import "./stage_store";
 import { Phase, StageIDType } from './constants';
 import StageSel from './StageSel';
+import Game from './Game';
 
 export function App() {
   const [phase, setPhase] = useState<Phase>(Phase.StageSel)
@@ -13,6 +14,7 @@ export function App() {
     case Phase.Playing:
     case Phase.GameOver:
     case Phase.Cleared:
+      return <Game stage={stage} />;
     default:
       return <></>
   }
