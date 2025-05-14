@@ -1,12 +1,11 @@
 import { create } from "zustand";
+import { StageIDType } from "./constants";
 
 export type StageUnit = {
   trialCount: number;
   best: number | null;
   full: boolean;
 };
-
-type StageIDType = string;
 
 export type StageStates = {
   m: Record<StageIDType, StageUnit>;
