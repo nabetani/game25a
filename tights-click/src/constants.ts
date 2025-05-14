@@ -13,8 +13,8 @@ export interface PhaseProps {
 
 export type StageIDType = string;
 
-export const makeStageID = (ix: number, size: number): StageIDType => {
-  return [ix, size].join(":")
+export const makeStageID = (course: number, size: number): StageIDType => {
+  return [course, size].join(":")
 }
 
 export const splitStageID = (s: StageIDType): { course: number, size: number } => {
