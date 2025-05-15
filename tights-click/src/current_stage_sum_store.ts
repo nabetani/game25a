@@ -1,19 +1,19 @@
 import { create } from "zustand";
 
-export type CurrentStageSum = {
+export type CurrentGame = {
   score: number;
   combo: number;
 };
 
-type CurrentStageSumStore = {
-  currentStageSum: CurrentStageSum;
-  updateCurrentStageSum: (newSum: Partial<CurrentStageSum>) => void;
+type CurrentGameStore = {
+  currentGame: CurrentGame;
+  updateCurrentGame: (newSum: Partial<CurrentGame>) => void;
 };
 
-export const useCurrentStageSumStore = create<CurrentStageSumStore>((set) => ({
-  currentStageSum: { score: 0, combo: 0 },
-  updateCurrentStageSum: (newSum) =>
+export const useCurrentGameStore = create<CurrentGameStore>((set) => ({
+  currentGame: { score: 0, combo: 0 },
+  updateCurrentGame: (newSum) =>
     set((state) => ({
-      currentStageSum: { ...state.currentStageSum, ...newSum },
+      currentGame: { ...state.currentGame, ...newSum },
     })),
 }));
