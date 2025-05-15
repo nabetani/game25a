@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStageID, Phase, PhaseProps, PlayingStageProps } from './constants';
 import { useStageStore } from './stage_store';
-import { useCurrentGameStore } from './current_stage_sum_store';
+import { useCurrentGameStore } from './current_game_store';
 
 const StageSel: React.FC<PhaseProps & PlayingStageProps> = ({ phase, setPhase, stage, setStage }) => {
   const { stageStates, updateStageUnit } = useStageStore()
