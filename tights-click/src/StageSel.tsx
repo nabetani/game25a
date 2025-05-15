@@ -1,9 +1,15 @@
 import React from 'react';
 import { makeStageID, Phase, PhaseProps, PlayingStageProps } from './constants';
+import { useStageStore } from './stage_store';
 
 const StageSel: React.FC<PhaseProps & PlayingStageProps> = ({ phase, setPhase, stage, setStage }) => {
+  const { stageStates, updateStageUnit } = useStageStore()
+
   const startGame = (ix: number, size: number) => {
-    setStage(makeStageID(ix, size))
+    const stageID = makeStageID(ix, size)
+    const selected = stageStates.m[stageID]
+    updateStageUnit(stageID, { ...selected, trialCount: (selected?.trialCount ?? 0) + 1 })
+    setStage(stageID)
     setPhase(Phase.Playing)
   }
   return (
