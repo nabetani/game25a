@@ -1,14 +1,17 @@
 import React from 'react';
 import { makeStageID, Phase, PhaseProps, PlayingStageProps } from './constants';
 import { useStageStore } from './stage_store';
+import { useCurrentStageSumStore } from './current_stage_sum_store';
 
 const StageSel: React.FC<PhaseProps & PlayingStageProps> = ({ phase, setPhase, stage, setStage }) => {
   const { stageStates, updateStageUnit } = useStageStore()
+  const { updateCurrentStageSum } = useCurrentStageSumStore();
 
   const startGame = (ix: number, size: number) => {
     const stageID = makeStageID(ix, size)
     const selected = stageStates.m[stageID]
     updateStageUnit(stageID, { ...selected, trialCount: (selected?.trialCount ?? 0) + 1 })
+    updateCurrentStageSum({ score: 0, combo: 0 });
     setStage(stageID)
     setPhase(Phase.Playing)
   }
