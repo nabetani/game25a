@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { GameSize, gameSizeNumbers, makeStageID, Phase, PhaseProps, PlayingStageProps } from './constants';
 import { useStageStore } from './stage_store';
 import { useCurrentGameStore } from './current_game_store';
+import { useStageSelStore } from './stage_sel_store';
 
 const StageSel: React.FC<PhaseProps & PlayingStageProps> = ({ phase, setPhase, stage, setStage }) => {
   const { stageStates, updateStageUnit } = useStageStore()
   const { updateCurrentGame } = useCurrentGameStore();
-  const [sizeID, setSizeID] = useState<GameSize>(GameSize.Tiny)
-  const [soundOn, setSoundOn] = useState<boolean>(false)
+  const { sizeID, setSizeID, soundOn, setSoundOn } = useStageSelStore();
 
   function startGame(ix: number, size: number) {
     const stageID = makeStageID(ix, size);
