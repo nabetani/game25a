@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { StageIDType, splitStageID } from './constants';
 import { useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
@@ -17,20 +17,46 @@ function CellSVG({ cell }: { cell: CellType }) {
     `;
   const col = ["red", "green", "blue", "Darkgoldenrod"][cell.dir & 3];
   const handleClick = () => {
-    const newDir = (cell.dir + 1) % 4;
-    const newCell = { ...cell, dir: newDir };
+    const newDir = cell.dir + 1 + Math.floor(Math.random() * 2);
+    const newCell = { ...cell, dir: newDir, dirPrev: cell.dir };
     const newCells = world.cells.map((c) => (c === cell ? newCell : c));
     const newWorld: WorldType = { ...world, cells: newCells };
     setWorld(newWorld);
   };
+  const dirTo = cell.dir & 3
+  const dirPrev = cell.dirPrev ?? cell.dir
+  const dirFrom = dirPrev - (cell.dir - dirTo)
   return (
     <path
+      key={[dirFrom, dirTo].join(" ")}
       d={c}
       fill={col}
       onClick={handleClick}
-      transform={`rotate(${cell.dir * 90})`}
-    />
+      transform={`rotate(${dirTo * 90})`}
+    >
+      {cell.dirPrev != null &&
+        <AnimateTransfromRotate dirFrom={dirFrom} dirTo={dirTo} />}
+    </path>
   );
+}
+
+function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: number }): React.JSX.Element {
+  const animateRef = useRef<SVGAnimateTransformElement>(null);
+  useEffect(() => {
+    if (animateRef.current != null) {
+      animateRef.current.beginElement(); // アニメーション開始
+    }
+  }, [dirFrom, dirTo]);
+  return <animateTransform
+    ref={animateRef}
+    key={[dirFrom, dirTo].join(" ")}
+    attributeName="transform"
+    attributeType="XML"
+    type="rotate"
+    from={dirFrom * 90}
+    to={dirTo * 90}
+    dur="0.2s"
+    repeatCount="1" />;
 }
 
 function WorldSVG(): React.JSX.Element {

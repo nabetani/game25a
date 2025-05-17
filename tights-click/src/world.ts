@@ -2,6 +2,7 @@ import { GameSize } from "./constants";
 
 export type CellType = {
   kind: number;
+  dirPrev?: number | null;
   dir: number;
 }
 
