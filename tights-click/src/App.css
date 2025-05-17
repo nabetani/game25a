@@ -10,3 +10,7 @@ html {
 .sound-selected {
   border: solid black 3px;
 }
+
+.world-svg {
+  border: dotted red 3px;
+}
