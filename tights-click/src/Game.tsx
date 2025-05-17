@@ -6,7 +6,17 @@ import { CellType } from './world';
 
 
 function CellSVG({ cell }: { cell: CellType }) {
-  return <rect x={0} y={0} width={0.9} height={0.9} />;
+  const c = `
+    M-0.5,0
+    A0.5,0.5 0 0,1 0.5,0
+    L0.5,0.4
+    Q0.5,0.5 0.4,0.5
+    L-0.4,0.5
+    Q-0.5,0.5 -0.5,0.4
+    Z
+    `
+  const col = ["red", "green", "blue", "yellow"][cell.dir & 3]
+  return <path d={c} fill={col} />
 }
 
 function WorldSVG(): React.JSX.Element {
@@ -25,7 +35,7 @@ function WorldSVG(): React.JSX.Element {
         const cell = world.cells[x + y * world.width];
         return <g key={[x, y].join(" ")}
           transform={`translate(${x} ${y})`}>
-          <CellSVG cell={cell} />
+          {cell != null && <CellSVG cell={cell} />}
         </g>
       }))}
   </svg>
