@@ -42,10 +42,28 @@ const StageSel: React.FC<PhaseProps & PlayingStageProps> = ({ phase, setPhase, s
           )}
       </div>
       <div>
-        {Array.from({ length: 20 }).map((_, ix) => <button
-          key={ix}
-          onClick={() => startGame(ix, sizeID)}>play {ix}
-        </button>)}
+        {Array.from({ length: 20 }).map((_, ix) => {
+          const sid = makeStageID(ix, sizeID)
+          const stage = stageStates.m[sid]
+          const count = stage == null ? 0 : stage.trialCount ?? 0
+          if (0 == count) {
+            return <button
+              key={ix}
+              onClick={() => startGame(ix, sizeID)}>play {ix}
+            </button>
+          }
+          return <div key={ix} style={{ border: "solid red 1px" }}>
+            <div style={{ display: "inline-block" }}>
+              {stage.best && <span>best: {stage.best}</span>}
+              {stage.full && <span>best: {stage.full}</span>}
+              <span>tried {stage.trialCount}</span>
+            </div>
+            <button
+              key={ix}
+              onClick={() => startGame(ix, sizeID)}>play {ix}
+            </button>
+          </div>
+        })}
       </div>
     </div>
   );
