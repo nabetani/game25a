@@ -4,7 +4,6 @@ import { useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
 import { CellType, WorldType } from './world';
 
-
 function CellSVG({ cell }: { cell: CellType }) {
   const { setWorld, world } = useWorldStore();
   const c = `
@@ -15,38 +14,53 @@ function CellSVG({ cell }: { cell: CellType }) {
     L-0.4,0.5
     Q-0.5,0.5 -0.5,0.4
     Z
-    `
-  const col = ["red", "green", "blue", "yellow"][cell.dir & 3]
+    `;
+  const col = ["red", "green", "blue", "Darkgoldenrod"][cell.dir & 3];
   const handleClick = () => {
-    const newDir = cell.dir + 1;
+    const newDir = (cell.dir + 1) % 4;
     const newCell = { ...cell, dir: newDir };
     const newCells = world.cells.map((c) => (c === cell ? newCell : c));
     const newWorld: WorldType = { ...world, cells: newCells };
     setWorld(newWorld);
   };
-  return <path d={c} fill={col} onClick={handleClick} />;
+  return (
+    <path
+      d={c}
+      fill={col}
+      onClick={handleClick}
+      transform={`rotate(${cell.dir * 90})`}
+    />
+  );
 }
 
 function WorldSVG(): React.JSX.Element {
-  const { world } = useWorldStore()
-  const { width, height } = world
-  const pad = 0.5
-  const svgVW = width + pad * 2
-  const svgVH = height + pad * 2
-  const viewBox = [-pad, -pad, svgVW, svgVH].join(" ")
-  const vw = 90
-  const styleW = `${vw}vw`
-  const styleH = `${vw / svgVW * svgVH}vw`
-  return <svg className='world-svg' style={{ width: styleW, height: styleH }} viewBox={viewBox}>
-    {Array.from({ length: world.height }).map((_, y) =>
-      Array.from({ length: world.width }).map((_, x) => {
-        const cell = world.cells[x + y * world.width];
-        return <g key={[x, y].join(" ")}
-          transform={`translate(${x} ${y})`}>
-          {cell != null && <CellSVG cell={cell} />}
-        </g>
-      }))}
-  </svg>
+  const { world } = useWorldStore();
+  const { width, height } = world;
+  const pad = 0.5;
+  const svgVW = width + pad * 2;
+  const svgVH = height + pad * 2;
+  const viewBox = [-pad, -pad, svgVW, svgVH].join(" ");
+  const vw = 90;
+  const styleW = `${vw}vw`;
+  const styleH = `${vw / svgVW * svgVH}vw`;
+  return (
+    <svg
+      className="world-svg"
+      style={{ width: styleW, height: styleH }}
+      viewBox={viewBox}
+    >
+      {Array.from({ length: world.height }).map((_, y) =>
+        Array.from({ length: world.width }).map((_, x) => {
+          const cell = world.cells[x + y * world.width];
+          return (
+            <g key={[x, y].join(" ")} transform={`translate(${x} ${y})`}>
+              {cell != null && <CellSVG cell={cell} />}
+            </g>
+          );
+        })
+      )}
+    </svg>
+  );
 }
 
 interface GameProps {
