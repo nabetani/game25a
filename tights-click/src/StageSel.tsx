@@ -3,19 +3,23 @@ import { GameSize, gameSizeNumbers, makeStageID, Phase, PhaseProps, PlayingStage
 import { useStageStore } from './stage_store';
 import { useCurrentGameStore } from './current_game_store';
 import { useStageSelStore } from './stage_sel_store';
+import useWorldStore from './worldStore';
+import { newWorld } from './world';
 
 const StageSel: React.FC<PhaseProps & PlayingStageProps> = ({ phase, setPhase, stage, setStage }) => {
   const { stageStates, updateStageUnit } = useStageStore()
   const { updateCurrentGame } = useCurrentGameStore();
   const { sizeID, setSizeID, soundOn, setSoundOn } = useStageSelStore();
+  const { setWorld } = useWorldStore()
 
-  function startGame(ix: number, size: number) {
+  function startGame(ix: number, size: GameSize) {
     const stageID = makeStageID(ix, size);
     const selected = stageStates.m[stageID];
     updateStageUnit(stageID, { ...selected, trialCount: (selected?.trialCount ?? 0) + 1 });
     updateCurrentGame({ score: 0, combo: 0 });
     setStage(stageID);
     setPhase(Phase.Playing);
+    setWorld(newWorld(ix, size))
   }
   return (
     <div>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { StageIDType, splitStageID } from './constants';
-import { useStageStore } from './stage_store';
 import { useCurrentGameStore } from './current_game_store';
 
 interface GameProps {
