@@ -8,6 +8,7 @@ const StageSel: React.FC<PhaseProps & PlayingStageProps> = ({ phase, setPhase, s
   const { stageStates, updateStageUnit } = useStageStore()
   const { updateCurrentGame } = useCurrentGameStore();
   const [sizeID, setSizeID] = useState<GameSize>(GameSize.Tiny)
+  const [soundOn, setSoundOn] = useState<boolean>(false)
 
   function startGame(ix: number, size: number) {
     const stageID = makeStageID(ix, size);
@@ -20,6 +21,11 @@ const StageSel: React.FC<PhaseProps & PlayingStageProps> = ({ phase, setPhase, s
   return (
     <div>
       <h1>Stage Selection</h1>
+      <div>
+        <button onClick={() => setSoundOn(!soundOn)}>
+          {soundOn ? "Sound ON" : "Sound OFF"}
+        </button>
+      </div>
       <div>
         {
           gameSizeNumbers().map(e => {
