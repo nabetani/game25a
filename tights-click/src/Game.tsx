@@ -1,17 +1,17 @@
 import React from 'react';
 import { StageIDType, splitStageID } from './constants';
 import { useStageStore } from './stage_store';
+import { useCurrentGameStore } from './current_game_store';
 
 interface GameProps {
   stage: StageIDType | null;
 }
 
 const Game: React.FC<GameProps> = ({ stage }) => {
-  const stageStore = useStageStore()
+  const { currentGame } = useCurrentGameStore();
   if (!stage) {
     return <div>No stage selected.</div>;
   }
-  const stageProp = stageStore.stageStates.m[stage]
 
   const { course, size } = splitStageID(stage);
 
@@ -19,7 +19,8 @@ const Game: React.FC<GameProps> = ({ stage }) => {
     <div>
       <p>Course: {course}</p>
       <p>Size: {size}</p>
-      <p>Prop: {JSON.stringify(stageProp)} </p>
+      <p>Score: {currentGame.score}</p>
+      <p>Combo: {currentGame.combo}</p>
     </div>
   );
 };
