@@ -21,9 +21,12 @@ const StageSel: React.FC<PhaseProps & PlayingStageProps> = ({ phase, setPhase, s
     <div>
       <h1>Stage Selection</h1>
       <div>
-        <button onClick={() => setSoundOn(!soundOn)}>
-          {soundOn ? "Sound ON" : "Sound OFF"}
-        </button>
+        <button
+          className={soundOn ? "sound-selected" : "sound-not-selected"}
+          onClick={() => setSoundOn(true)}>Sound ON</button>
+        <button
+          className={soundOn ? "sound-not-selected" : "sound-selected"}
+          onClick={() => setSoundOn(false)}>Sound OFF</button>
       </div>
       <div>
         {
