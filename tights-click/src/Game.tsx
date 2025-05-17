@@ -2,10 +2,11 @@ import React from 'react';
 import { StageIDType, splitStageID } from './constants';
 import { useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
-import { CellType } from './world';
+import { CellType, WorldType } from './world';
 
 
 function CellSVG({ cell }: { cell: CellType }) {
+  const { setWorld, world } = useWorldStore();
   const c = `
     M-0.5,0
     A0.5,0.5 0 0,1 0.5,0
@@ -16,7 +17,14 @@ function CellSVG({ cell }: { cell: CellType }) {
     Z
     `
   const col = ["red", "green", "blue", "yellow"][cell.dir & 3]
-  return <path d={c} fill={col} />
+  const handleClick = () => {
+    const newDir = cell.dir + 1;
+    const newCell = { ...cell, dir: newDir };
+    const newCells = world.cells.map((c) => (c === cell ? newCell : c));
+    const newWorld: WorldType = { ...world, cells: newCells };
+    setWorld(newWorld);
+  };
+  return <path d={c} fill={col} onClick={handleClick} />;
 }
 
 function WorldSVG(): React.JSX.Element {
@@ -67,4 +75,3 @@ const Game: React.FC<GameProps> = ({ stage }) => {
 };
 
 export default Game;
-
