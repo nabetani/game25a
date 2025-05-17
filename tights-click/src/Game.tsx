@@ -2,11 +2,12 @@ import React from 'react';
 import { StageIDType, splitStageID } from './constants';
 import { useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
+import { CellType } from './world';
 
-interface GameProps {
-  stage: StageIDType | null;
+
+function CellSVG({ cell }: { cell: CellType }) {
+  return <rect x={0} y={0} width={0.9} height={0.9} />;
 }
-
 
 function WorldSVG(): React.JSX.Element {
   const { world } = useWorldStore()
@@ -20,13 +21,18 @@ function WorldSVG(): React.JSX.Element {
   const styleH = `${vw / svgVW * svgVH}vw`
   return <svg className='world-svg' style={{ width: styleW, height: styleH }} viewBox={viewBox}>
     {Array.from({ length: world.height }).map((_, y) =>
-      Array.from({ length: world.width }).map((_, x) => (
-        <g key={[x, y].join(" ")}>
-          <rect x={x} y={y} width={0.9} height={0.9} />
+      Array.from({ length: world.width }).map((_, x) => {
+        const cell = world.cells[x + y * world.width];
+        return <g key={[x, y].join(" ")}
+          transform={`translate(${x} ${y})`}>
+          <CellSVG cell={cell} />
         </g>
-      ))
-    )}
+      }))}
   </svg>
+}
+
+interface GameProps {
+  stage: StageIDType | null;
 }
 
 const Game: React.FC<GameProps> = ({ stage }) => {
@@ -51,3 +57,4 @@ const Game: React.FC<GameProps> = ({ stage }) => {
 };
 
 export default Game;
+
