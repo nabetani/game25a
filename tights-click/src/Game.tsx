@@ -29,19 +29,25 @@ function CellSVG({ cell }: { cell: CellType }) {
   const dirPrev = cell.dirPrev ?? cell.dir
   const dirFrom = dirPrev - (cell.dir - dirTo)
   return (
-    <path
-      key={[dirFrom, dirTo].join(" ")}
-      d={c}
-      fill={col}
-      onPointerDown={(event) => {
-        event.preventDefault()
-        handleClick()
-      }}
+    <g
       transform={`rotate(${dirTo * 90})`}
     >
       {cell.dirPrev != null &&
         <AnimateTransfromRotate dirFrom={dirFrom} dirTo={dirTo} />}
-    </path>
+      <path
+        key={[dirFrom, dirTo].join(" ")}
+        d={c}
+        fill={col}
+        onPointerDown={(event) => {
+          event.preventDefault()
+          handleClick()
+        }}
+      >
+      </path>
+      <text style={{ pointerEvents: "none" }}>
+        {["タ", "イ", "ツ"][cell.kind] ?? "?"}
+      </text>
+    </g>
   );
 }
 
@@ -67,10 +73,11 @@ function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: nu
 function WorldSVG(): React.JSX.Element {
   const { world } = useWorldStore();
   const { width, height } = world;
-  const pad = 0.5;
-  const svgVW = width + pad * 2;
-  const svgVH = height + pad * 2;
-  const viewBox = [-pad, -pad, svgVW, svgVH].join(" ");
+  const pad = 0.25;
+  const cellStep = 1.25
+  const svgVW = width * cellStep + pad * 2;
+  const svgVH = height * cellStep + pad * 2;
+  const viewBox = [0, 0, svgVW, svgVH].join(" ");
   const vw = 90;
   const styleW = `${vw}vw`;
   const styleH = `${vw / svgVW * svgVH}vw`;
@@ -80,16 +87,25 @@ function WorldSVG(): React.JSX.Element {
       style={{ width: styleW, height: styleH }}
       viewBox={viewBox}
     >
-      {Array.from({ length: world.height }).map((_, y) =>
-        Array.from({ length: world.width }).map((_, x) => {
-          const cell = world.cells[x + y * world.width];
-          return (
-            <g key={[x, y].join(" ")} transform={`translate(${x} ${y})`}>
-              {cell != null && <CellSVG cell={cell} />}
-            </g>
-          );
-        })
-      )}
+      <g
+        fontFamily='Cherry Bomb One'
+        dominantBaseline="middle" textAnchor="middle"
+        fontSize={1}
+      >
+
+        {Array.from({ length: world.height }).map((_, y) =>
+          Array.from({ length: world.width }).map((_, x) => {
+            const cell = world.cells[x + y * world.width];
+            const tx = pad + (x + 0.5) * cellStep
+            const ty = pad + (y + 0.5) * cellStep
+            return (
+              <g key={[x, y].join(" ")} transform={`translate(${tx} ${ty})`}>
+                {cell != null && <CellSVG cell={cell} />}
+              </g>
+            );
+          })
+        )}
+      </g>
     </svg>
   );
 }
