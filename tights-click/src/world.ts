@@ -1,9 +1,11 @@
 import { GameSize } from "./constants";
+import { CellType, WorldType } from "./world";
 
 export enum CellState { // Object.values を使うために 非const
   placed = 1,
   fixed = 2,
-  hidden = 3,
+  vanishing = 3,
+  vanished = 4,
 }
 
 
@@ -52,5 +54,19 @@ const getSize = (size: GameSize): { width: number; height: number; } => {
     case GameSize.Huge:
       return { width: 8, height: 12 };
   }
+}
+export function progressWorld(cell: CellType, world: WorldType): { world: WorldType, score: number } {
+  const newDir = cell.dir + 1 + Math.floor(Math.random() * 2);
+  const newCell = { ...cell, dir: newDir, dirPrev: cell.dir, state: CellState.vanishing };
+  const newCells = world.cells.map((c) => {
+    if (c === cell) { return newCell }
+    if (c.state == CellState.vanishing) {
+      return { ...c, state: CellState.vanished }
+    }
+    return c
+  })
+  const nextKind = (world.nextKind + 1) % 3
+  const newWorld: WorldType = { ...world, cells: newCells, nextKind };
+  return { world: newWorld, score: 10 }
 }
 

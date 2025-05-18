@@ -2,13 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import { StageIDType, splitStageID } from './constants';
 import { useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
-import { CellState, CellType, WorldType } from './world';
+import { CellState, CellType, progressWorld, WorldType } from './world';
 
 const pieceColor = (dir: number): string => {
-  return `oklch(80% 0.4 ${dir * 90 + 10}`
+  return `oklch(0.8 0.4 ${dir * 90 + 10}`
 }
 
-const animationDur = "0.125s"
+const animationDur = "1.25s"
 function CellSVG({ cell }: { cell: CellType }) {
   const { setWorld, world } = useWorldStore();
   const { currentGame, updateCurrentGame } = useCurrentGameStore();
@@ -23,41 +23,39 @@ function CellSVG({ cell }: { cell: CellType }) {
     `;
   const col = pieceColor(cell.dir & 3);
   const handleClick = () => {
-    updateCurrentGame({ score: currentGame.score + 1 })
-    const newDir = cell.dir + 1 + Math.floor(Math.random() * 2);
-    const newCell = { ...cell, dir: newDir, dirPrev: cell.dir };
-    const newCells = world.cells.map((c) => (c === cell ? newCell : c));
-    const newWorld: WorldType = { ...world, cells: newCells };
-    setWorld(newWorld);
+    const p = progressWorld(cell, world);
+    updateCurrentGame({ score: currentGame.score + p.score })
+    setWorld(p.world);
   };
   const dirTo = cell.dir & 3 + 4
   const dirPrev = cell.dirPrev ?? cell.dir
   const dirFrom = dirPrev - (cell.dir - dirTo)
+  const opacity = CellState.vanishing <= cell.state ? 0 : 1
   return (
-    <g>
-      <AnimateTransfromShake state={cell.state} />
-
-      <g
-        transform={`rotate(${dirTo * 90})`}
-      >
-        {cell.dirPrev != null &&
-          <AnimateTransfromRotate dirFrom={dirFrom} dirTo={dirTo} />}
-        <g>
-          <path
-            key={[dirFrom, dirTo].join(" ")}
-            d={c}
-            fill={col}
-            onPointerDown={(event) => {
-              event.preventDefault()
-              handleClick()
-            }}
-          >
-            <AnimateColor dirFrom={dirFrom} dirTo={dirTo} />
-          </path>
+    <g opacity={opacity}>
+      <AnimateOpacity state={cell.state} />
+      <g>
+        <AnimateTransfromShake state={cell.state} />
+        <g transform={`rotate(${dirTo * 90})`}>
+          {cell.dirPrev != null &&
+            <AnimateTransfromRotate dirFrom={dirFrom} dirTo={dirTo} />}
+          <g>
+            <path
+              key={[dirFrom, dirTo].join(" ")}
+              d={c}
+              fill={col}
+              onPointerDown={(event) => {
+                event.preventDefault()
+                handleClick()
+              }}
+            >
+              <AnimateColor dirFrom={dirFrom} dirTo={dirTo} cell={cell} />
+            </path>
+          </g>
+          <text y={0.2} style={{ pointerEvents: "none" }}>
+            {["タ", "イ", "ツ"][cell.kind] ?? "?"}
+          </text>
         </g>
-        <text y={0.2} style={{ pointerEvents: "none" }}>
-          {["タ", "イ", "ツ"][cell.kind] ?? "?"}
-        </text>
       </g>
     </g>
   );
@@ -83,6 +81,23 @@ function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: nu
       dur={animationDur}
       repeatCount="1" />
   </>
+}
+
+function AnimateOpacity({ state }: { state: CellState }): React.JSX.Element {
+  const aniRef = useRef<SVGAnimateElement>(null);
+  useEffect(() => {
+    if (aniRef.current != null) {
+      aniRef.current.beginElement(); // アニメーション開始
+    }
+  }, [state]);
+  if (state != CellState.vanishing) { return <></> }
+  return <animate
+    ref={aniRef}
+    attributeName='opacity'
+    values="1;0"
+    dur={animationDur}
+    repeatCount={1} />
+
 }
 
 function AnimateTransfromShake(
@@ -120,7 +135,8 @@ function AnimateTransfromShake(
 
 }
 
-function AnimateColor({ dirFrom, dirTo }: { dirFrom: number, dirTo: number }): React.JSX.Element {
+function AnimateColor({ dirFrom, dirTo, cell }:
+  { cell: CellType, dirFrom: number, dirTo: number }): React.JSX.Element {
   const aniColRef = useRef<SVGAnimateElement>(null);
   useEffect(() => {
     if (aniColRef.current != null) {
@@ -128,7 +144,8 @@ function AnimateColor({ dirFrom, dirTo }: { dirFrom: number, dirTo: number }): R
     }
   }, [dirFrom, dirTo]);
   const n = 10
-  const colors = Array.from({ length: n }).map((_, ix) => pieceColor(dirFrom + (dirTo - dirFrom) / n * ix)).join(";")
+  const colors = Array.from({ length: n }).map(
+    (_, ix) => pieceColor(dirFrom + (dirTo - dirFrom) / n * ix)).join(";")
   return <>
     <animate
       ref={aniColRef}
