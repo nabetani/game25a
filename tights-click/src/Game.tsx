@@ -33,7 +33,10 @@ function CellSVG({ cell }: { cell: CellType }) {
       key={[dirFrom, dirTo].join(" ")}
       d={c}
       fill={col}
-      onClick={handleClick}
+      onPointerDown={(event) => {
+        event.preventDefault()
+        handleClick()
+      }}
       transform={`rotate(${dirTo * 90})`}
     >
       {cell.dirPrev != null &&
