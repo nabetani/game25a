@@ -6,6 +6,7 @@ import { CellType, WorldType } from './world';
 
 function CellSVG({ cell }: { cell: CellType }) {
   const { setWorld, world } = useWorldStore();
+  const { currentGame, updateCurrentGame } = useCurrentGameStore();
   const c = `
     M-0.5,0
     A0.5,0.5 0 0,1 0.5,0
@@ -17,6 +18,7 @@ function CellSVG({ cell }: { cell: CellType }) {
     `;
   const col = ["red", "green", "blue", "Darkgoldenrod"][cell.dir & 3];
   const handleClick = () => {
+    updateCurrentGame({ score: currentGame.score + 1 })
     const newDir = cell.dir + 1 + Math.floor(Math.random() * 2);
     const newCell = { ...cell, dir: newDir, dirPrev: cell.dir };
     const newCells = world.cells.map((c) => (c === cell ? newCell : c));
