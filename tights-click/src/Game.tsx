@@ -44,11 +44,14 @@ function CellSVG({ cell }: { cell: CellType }) {
               key={[dirFrom, dirTo].join(" ")}
               d={c}
               fill={col}
+              strokeWidth={cell.kind == world.nextKind ? 0.1 : 0}
+              stroke='black'
               onPointerDown={(event) => {
                 event.preventDefault()
                 handleClick()
               }}
             >
+              <AnimateStrokeWidth cell={cell.kind} world={world.nextKind} />
               <AnimateColor dirFrom={dirFrom} dirTo={dirTo} cell={cell} />
             </path>
           </g>
@@ -61,6 +64,24 @@ function CellSVG({ cell }: { cell: CellType }) {
   );
 }
 
+function AnimateStrokeWidth({ cell, world }: { cell: number, world: number }): React.JSX.Element {
+  const aniRef = useRef<SVGAnimateElement>(null);
+  const cur = cell == world
+  const vani = 0 == ((cell - world + 1) % 3 + 3) % 3
+  useEffect(() => {
+    if (aniRef.current != null) {
+      aniRef.current.beginElement(); // アニメーション開始
+    }
+  }, [cur, vani]);
+  if (!cur && !vani) { return <></> }
+  const values = (cur ? [0, 0.1] : [0.1, 0]).join(";")
+  return <animate
+    ref={aniRef}
+    attributeName='stroke-width'
+    values={values}
+    dur={animationDur}
+    repeatCount={1} />
+}
 
 function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: number }): React.JSX.Element {
   const aniTransRef = useRef<SVGAnimateTransformElement>(null);
