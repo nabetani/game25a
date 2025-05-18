@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { StageIDType, splitStageID } from './constants';
 import { useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
-import { CellType, WorldType } from './world';
+import { CellState, CellType, WorldType } from './world';
 
 const pieceColor = (dir: number): string => {
   return `oklch(80% 0.4 ${dir * 90 + 10}`
@@ -34,28 +34,35 @@ function CellSVG({ cell }: { cell: CellType }) {
   const dirPrev = cell.dirPrev ?? cell.dir
   const dirFrom = dirPrev - (cell.dir - dirTo)
   return (
-    <g
-      transform={`rotate(${dirTo * 90})`}
-    >
-      {cell.dirPrev != null &&
-        <AnimateTransfromRotate dirFrom={dirFrom} dirTo={dirTo} />}
-      <path
-        key={[dirFrom, dirTo].join(" ")}
-        d={c}
-        fill={col}
-        onPointerDown={(event) => {
-          event.preventDefault()
-          handleClick()
-        }}
+    <g>
+      <AnimateTransfromShake state={cell.state} />
+
+      <g
+        transform={`rotate(${dirTo * 90})`}
       >
-        <AnimateColor dirFrom={dirFrom} dirTo={dirTo} />
-      </path>
-      <text y={0.2} style={{ pointerEvents: "none" }}>
-        {["タ", "イ", "ツ"][cell.kind] ?? "?"}
-      </text>
+        {cell.dirPrev != null &&
+          <AnimateTransfromRotate dirFrom={dirFrom} dirTo={dirTo} />}
+        <g>
+          <path
+            key={[dirFrom, dirTo].join(" ")}
+            d={c}
+            fill={col}
+            onPointerDown={(event) => {
+              event.preventDefault()
+              handleClick()
+            }}
+          >
+            <AnimateColor dirFrom={dirFrom} dirTo={dirTo} />
+          </path>
+        </g>
+        <text y={0.2} style={{ pointerEvents: "none" }}>
+          {["タ", "イ", "ツ"][cell.kind] ?? "?"}
+        </text>
+      </g>
     </g>
   );
 }
+
 
 function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: number }): React.JSX.Element {
   const aniTransRef = useRef<SVGAnimateTransformElement>(null);
@@ -64,8 +71,6 @@ function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: nu
       aniTransRef.current.beginElement(); // アニメーション開始
     }
   }, [dirFrom, dirTo]);
-  const n = 10
-  const colors = Array.from({ length: n }).map((_, ix) => pieceColor(dirFrom + (dirTo - dirFrom) / n * ix)).join(";")
   return <>
     <animateTransform
       ref={aniTransRef}
@@ -78,6 +83,41 @@ function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: nu
       dur={animationDur}
       repeatCount="1" />
   </>
+}
+
+function AnimateTransfromShake(
+  { state }:
+    { state: CellState }): React.JSX.Element {
+  const aniTransRef = useRef<SVGAnimateTransformElement>(null);
+  useEffect(() => {
+    if (aniTransRef.current != null) {
+      aniTransRef.current.beginElement(); // アニメーション開始
+    }
+  }, [state]);
+
+  if (state != CellState.fixed) { return <></> }
+
+  const shake = (): string => {
+    const n = 100
+    const r = 0.05
+    return Array.from({ length: n }).map((_, ix): string => {
+      const t0 = ix * Math.PI * 10 / n
+      const t1 = ix * Math.PI * 12 / n
+      return [
+        r * Math.sin(t0),
+        r * Math.sin(t1),
+      ].join(" ")
+    }).join(";")
+  }
+  return <animateTransform
+    ref={aniTransRef}
+    key={state}
+    dur="1s"
+    values={shake()}
+    repeatCount="indefinite"
+    attributeName="transform"
+    attributeType="XML" />
+
 }
 
 function AnimateColor({ dirFrom, dirTo }: { dirFrom: number, dirTo: number }): React.JSX.Element {

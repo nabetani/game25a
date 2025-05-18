@@ -1,9 +1,17 @@
 import { GameSize } from "./constants";
 
+export enum CellState { // Object.values を使うために 非const
+  placed = 1,
+  fixed = 2,
+  hidden = 3,
+}
+
+
 export type CellType = {
   kind: number;
   dirPrev?: number | null;
   dir: number;
+  state: CellState,
 }
 
 export type WorldType = {
@@ -20,7 +28,9 @@ export const newWorld = (ix: number, size: GameSize): WorldType => {
     const dir = (ix + (ix ^ 5) * 0.3) & 3
     const dirPrev = dir - 1 - ((ix + (ix ^ 5) * 0.7) % 3 | 0)
     const kind = ((ix + (ix ^ 5) * 0.7) | 0) % 3
-    return { dir, dirPrev, kind }
+    const states = Object.values(CellState) as CellState[];
+    const state = states[ix % states.length]
+    return { dir, dirPrev, kind, state }
   })
   return {
     width, height,
