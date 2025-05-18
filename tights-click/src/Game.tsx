@@ -8,6 +8,7 @@ const pieceColor = (dir: number): string => {
   return `oklch(80% 0.4 ${dir * 90 + 10}`
 }
 
+const animationDur = "0.125s"
 function CellSVG({ cell }: { cell: CellType }) {
   const { setWorld, world } = useWorldStore();
   const { currentGame, updateCurrentGame } = useCurrentGameStore();
@@ -49,7 +50,7 @@ function CellSVG({ cell }: { cell: CellType }) {
       >
         <AnimateColor dirFrom={dirFrom} dirTo={dirTo} />
       </path>
-      <text style={{ pointerEvents: "none" }}>
+      <text y={0.2} style={{ pointerEvents: "none" }}>
         {["タ", "イ", "ツ"][cell.kind] ?? "?"}
       </text>
     </g>
@@ -63,7 +64,6 @@ function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: nu
       aniTransRef.current.beginElement(); // アニメーション開始
     }
   }, [dirFrom, dirTo]);
-  const dur = "1s"
   const n = 10
   const colors = Array.from({ length: n }).map((_, ix) => pieceColor(dirFrom + (dirTo - dirFrom) / n * ix)).join(";")
   return <>
@@ -75,7 +75,7 @@ function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: nu
       type="rotate"
       from={dirFrom * 90}
       to={dirTo * 90}
-      dur={dur}
+      dur={animationDur}
       repeatCount="1" />
   </>
 }
@@ -87,7 +87,6 @@ function AnimateColor({ dirFrom, dirTo }: { dirFrom: number, dirTo: number }): R
       aniColRef.current.beginElement(); // アニメーション開始
     }
   }, [dirFrom, dirTo]);
-  const dur = "1s"
   const n = 10
   const colors = Array.from({ length: n }).map((_, ix) => pieceColor(dirFrom + (dirTo - dirFrom) / n * ix)).join(";")
   return <>
@@ -95,7 +94,7 @@ function AnimateColor({ dirFrom, dirTo }: { dirFrom: number, dirTo: number }): R
       ref={aniColRef}
       attributeName='fill'
       values={colors}
-      dur={dur}
+      dur={animationDur}
       repeatCount={1} />
   </>
 }
