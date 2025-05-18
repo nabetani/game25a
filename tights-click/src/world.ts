@@ -18,7 +18,7 @@ export const newWorld = (ix: number, size: GameSize): WorldType => {
   const { width, height } = getSize(size)
   const cells = Array.from({ length: width * height }).map((_, ix) => {
     const dir = (ix + (ix ^ 5) * 0.3) & 3
-    const dirPrev = dir - (ix * 0.7 + 1) & 3 % 3
+    const dirPrev = dir - 1 - ((ix + (ix ^ 5) * 0.7) % 3 | 0)
     const kind = ((ix + (ix ^ 5) * 0.7) | 0) % 3
     return { dir, dirPrev, kind }
   })

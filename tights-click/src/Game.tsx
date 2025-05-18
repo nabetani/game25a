@@ -4,6 +4,10 @@ import { useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
 import { CellType, WorldType } from './world';
 
+const pieceColor = (dir: number): string => {
+  return `oklch(80% 0.4 ${dir * 90 + 10}`
+}
+
 function CellSVG({ cell }: { cell: CellType }) {
   const { setWorld, world } = useWorldStore();
   const { currentGame, updateCurrentGame } = useCurrentGameStore();
@@ -16,7 +20,7 @@ function CellSVG({ cell }: { cell: CellType }) {
     Q-0.5,0.5 -0.5,0.4
     Z
     `;
-  const col = ["red", "green", "blue", "Darkgoldenrod"][cell.dir & 3];
+  const col = pieceColor(cell.dir & 3);
   const handleClick = () => {
     updateCurrentGame({ score: currentGame.score + 1 })
     const newDir = cell.dir + 1 + Math.floor(Math.random() * 2);
@@ -25,7 +29,7 @@ function CellSVG({ cell }: { cell: CellType }) {
     const newWorld: WorldType = { ...world, cells: newCells };
     setWorld(newWorld);
   };
-  const dirTo = cell.dir & 3
+  const dirTo = cell.dir & 3 + 4
   const dirPrev = cell.dirPrev ?? cell.dir
   const dirFrom = dirPrev - (cell.dir - dirTo)
   return (
@@ -43,6 +47,7 @@ function CellSVG({ cell }: { cell: CellType }) {
           handleClick()
         }}
       >
+        <AnimateColor dirFrom={dirFrom} dirTo={dirTo} />
       </path>
       <text style={{ pointerEvents: "none" }}>
         {["タ", "イ", "ツ"][cell.kind] ?? "?"}
@@ -52,24 +57,48 @@ function CellSVG({ cell }: { cell: CellType }) {
 }
 
 function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: number }): React.JSX.Element {
-  const animateRef = useRef<SVGAnimateTransformElement>(null);
+  const aniTransRef = useRef<SVGAnimateTransformElement>(null);
   useEffect(() => {
-    if (animateRef.current != null) {
-      animateRef.current.beginElement(); // アニメーション開始
+    if (aniTransRef.current != null) {
+      aniTransRef.current.beginElement(); // アニメーション開始
     }
   }, [dirFrom, dirTo]);
-  return <animateTransform
-    ref={animateRef}
-    key={[dirFrom, dirTo].join(" ")}
-    attributeName="transform"
-    attributeType="XML"
-    type="rotate"
-    from={dirFrom * 90}
-    to={dirTo * 90}
-    dur="0.2s"
-    repeatCount="1" />;
+  const dur = "1s"
+  const n = 10
+  const colors = Array.from({ length: n }).map((_, ix) => pieceColor(dirFrom + (dirTo - dirFrom) / n * ix)).join(";")
+  return <>
+    <animateTransform
+      ref={aniTransRef}
+      key={[dirFrom, dirTo].join(" ")}
+      attributeName="transform"
+      attributeType="XML"
+      type="rotate"
+      from={dirFrom * 90}
+      to={dirTo * 90}
+      dur={dur}
+      repeatCount="1" />
+  </>
 }
 
+function AnimateColor({ dirFrom, dirTo }: { dirFrom: number, dirTo: number }): React.JSX.Element {
+  const aniColRef = useRef<SVGAnimateElement>(null);
+  useEffect(() => {
+    if (aniColRef.current != null) {
+      aniColRef.current.beginElement(); // アニメーション開始
+    }
+  }, [dirFrom, dirTo]);
+  const dur = "1s"
+  const n = 10
+  const colors = Array.from({ length: n }).map((_, ix) => pieceColor(dirFrom + (dirTo - dirFrom) / n * ix)).join(";")
+  return <>
+    <animate
+      ref={aniColRef}
+      attributeName='fill'
+      values={colors}
+      dur={dur}
+      repeatCount={1} />
+  </>
+}
 function WorldSVG(): React.JSX.Element {
   const { world } = useWorldStore();
   const { width, height } = world;
