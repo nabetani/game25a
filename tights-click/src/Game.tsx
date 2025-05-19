@@ -106,19 +106,34 @@ function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: nu
 
 function AnimateOpacity({ state }: { state: CellState }): React.JSX.Element {
   const aniRef = useRef<SVGAnimateElement>(null);
+  const aniTRef = useRef<SVGAnimateTransformElement>(null);
   useEffect(() => {
     if (aniRef.current != null) {
       aniRef.current.beginElement(); // アニメーション開始
     }
+    if (aniTRef.current != null) {
+      aniTRef.current.beginElement(); // アニメーション開始
+    }
   }, [state]);
   if (state != CellState.vanishing) { return <></> }
-  return <animate
-    ref={aniRef}
-    attributeName='opacity'
-    values="1;0"
-    dur={animationDur}
-    repeatCount={1} />
+  return <>
+    <animate
+      ref={aniRef}
+      attributeName='opacity'
+      values="1;0"
+      dur={animationDur}
+      repeatCount={1} />
+    <animateTransform
+      ref={aniTRef}
+      key={state}
+      dur={animationDur}
+      values="1;10"
+      repeatCount={1}
+      type="scale"
 
+      attributeName="transform"
+      attributeType="XML" />
+  </>
 }
 
 function AnimateTransfromShake(
@@ -176,6 +191,19 @@ function AnimateColor({ dirFrom, dirTo, cell }:
       repeatCount={1} />
   </>
 }
+
+function mapXY<T>(w: { width: number, height: number }, proc: (x: number, y: number) => T | null): T[] {
+  const { width, height } = w
+  const r: T[] = []
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const v = proc(x, y)
+      if (v != null) { r.push(v) }
+    }
+  }
+  return r
+}
+
 function WorldSVG(): React.JSX.Element {
   const { world } = useWorldStore();
   const { width, height } = world;
@@ -187,6 +215,15 @@ function WorldSVG(): React.JSX.Element {
   const vw = 90;
   const styleW = `${vw}vw`;
   const styleH = `${vw / svgVW * svgVH}vw`;
+  const placeCell = (cell: CellType, x: number, y: number): React.JSX.Element => {
+    const tx = pad + (x + 0.5) * cellStep
+    const ty = pad + (y + 0.5) * cellStep
+    return (
+      <g key={[x, y].join(" ")} transform={`translate(${tx} ${ty})`}>
+        {cell != null && <CellSVG cell={cell} />}
+      </g>
+    );
+  }
   return (
     <svg
       className="world-svg"
@@ -198,19 +235,16 @@ function WorldSVG(): React.JSX.Element {
         dominantBaseline="middle" textAnchor="middle"
         fontSize={1}
       >
-
-        {Array.from({ length: world.height }).map((_, y) =>
-          Array.from({ length: world.width }).map((_, x) => {
-            const cell = world.cells[x + y * world.width];
-            const tx = pad + (x + 0.5) * cellStep
-            const ty = pad + (y + 0.5) * cellStep
-            return (
-              <g key={[x, y].join(" ")} transform={`translate(${tx} ${ty})`}>
-                {cell != null && <CellSVG cell={cell} />}
-              </g>
-            );
-          })
-        )}
+        {mapXY(world, (x, y) => {
+          const cell = world.cells[x + y * world.width];
+          if (CellState.vanishing <= cell.state) { return null }
+          return placeCell(cell, x, y)
+        })}
+        {mapXY(world, (x, y) => {
+          const cell = world.cells[x + y * world.width];
+          if (!(CellState.vanishing <= cell.state)) { return null }
+          return placeCell(cell, x, y)
+        })}
       </g>
     </svg>
   );
