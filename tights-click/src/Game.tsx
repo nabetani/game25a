@@ -9,7 +9,7 @@ const pieceColor = (dir: number): string => {
 }
 
 const animationDur = "1.25s"
-function CellSVG({ cell }: { cell: CellType }) {
+function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
   const { setWorld, world } = useWorldStore();
   const { currentGame, updateCurrentGame } = useCurrentGameStore();
   const c = `
@@ -23,7 +23,7 @@ function CellSVG({ cell }: { cell: CellType }) {
     `;
   const col = pieceColor(cell.dir & 3);
   const handleClick = () => {
-    const p = progressWorld(cell, world);
+    const p = progressWorld(cell, x, y, world);
     if (p == null) { return }
     updateCurrentGame({ score: currentGame.score + p.score })
     setWorld(p.world);
@@ -221,7 +221,7 @@ function WorldSVG(): React.JSX.Element {
     const ty = pad + (y + 0.5) * cellStep
     return (
       <g key={[x, y].join(" ")} transform={`translate(${tx} ${ty})`}>
-        {cell != null && <CellSVG cell={cell} />}
+        {cell != null && <CellSVG x={x} y={y} cell={cell} />}
       </g>
     );
   }

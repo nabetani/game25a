@@ -55,11 +55,19 @@ const getSize = (size: GameSize): { width: number; height: number; } => {
       return { width: 8, height: 12 };
   }
 }
-export function progressWorld(cell: CellType, world: WorldType): null | { world: WorldType, score: number } {
+export function progressWorld(cell: CellType, x: number, y: number, world: WorldType): null | { world: WorldType, score: number } {
   if (cell.kind != world.nextKind) { return null }
+  const rotCell = (c: CellType, ix: number, rot: number, dir: number): CellType => {
+    const cx = ix % world.width
+    const cy = (ix - cx) / world.width
+    if ((dir & 1) == 0 ? cx == x : cy == y) {
+      return { ...c, dir: c.dir + rot, dirPrev: c.dir }
+    }
+    return c
+  }
   if (cell.kind == 2) {
     const newCell = { ...cell, state: CellState.vanishing };
-    const newCells = world.cells.map((c) => {
+    const newCells = world.cells.map((c, ix) => {
       if (c === cell) { return newCell }
       switch (c.state) {
         case CellState.vanishing:
@@ -67,19 +75,22 @@ export function progressWorld(cell: CellType, world: WorldType): null | { world:
         case CellState.fixed:
           return { ...c, state: CellState.vanishing }
       }
-      return c
+      return rotCell(c, ix, cell.kind + 1, cell.dir)
     })
     const nextKind = (world.nextKind + 1) % 3
     const newWorld: WorldType = { ...world, cells: newCells, nextKind };
     return { world: newWorld, score: 10 }
   } else {
     const newCell = { ...cell, state: CellState.fixed };
-    const newCells = world.cells.map((c) => {
+    const newCells = world.cells.map((c, ix) => {
       if (c === cell) { return newCell }
-      if (c.state == CellState.vanishing) {
-        return { ...c, state: CellState.vanished }
+      switch (c.state) {
+        case CellState.vanishing:
+          return { ...c, state: CellState.vanished }
+        case CellState.fixed:
+          return c
       }
-      return c
+      return rotCell(c, ix, cell.kind + 1, cell.dir)
     })
     const nextKind = (world.nextKind + 1) % 3
     const newWorld: WorldType = { ...world, cells: newCells, nextKind };
