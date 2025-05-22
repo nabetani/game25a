@@ -57,10 +57,21 @@ const getSize = (size: GameSize): { width: number; height: number; } => {
 }
 export function progressWorld(cell: CellType, x: number, y: number, world: WorldType): null | { world: WorldType, score: number } {
   if (cell.kind != world.nextKind) { return null }
-  const rotCell = (c: CellType, ix: number, rot: number, dir: number): CellType => {
+  const rotCell = (c: CellType, ix: number): CellType => {
+    const rot = cell.kind + 1
+    const dir = (cell.dir) & 3
     const cx = ix % world.width
     const cy = (ix - cx) / world.width
-    if ((dir & 1) == 0 ? cx == x : cy == y) {
+    const m = (): boolean => {
+      switch (dir) {
+        default:
+        case 0: return cx == x && cy < y
+        case 1: return cy == y && x < cx
+        case 2: return cx == x && y < cy
+        case 3: return cy == y && cx < x
+      }
+    }
+    if (m()) {
       return { ...c, dir: c.dir + rot, dirPrev: c.dir }
     }
     return c
@@ -75,7 +86,7 @@ export function progressWorld(cell: CellType, x: number, y: number, world: World
         case CellState.fixed:
           return { ...c, state: CellState.vanishing }
       }
-      return rotCell(c, ix, cell.kind + 1, cell.dir)
+      return rotCell(c, ix)
     })
     const nextKind = (world.nextKind + 1) % 3
     const newWorld: WorldType = { ...world, cells: newCells, nextKind };
@@ -90,7 +101,7 @@ export function progressWorld(cell: CellType, x: number, y: number, world: World
         case CellState.fixed:
           return c
       }
-      return rotCell(c, ix, cell.kind + 1, cell.dir)
+      return rotCell(c, ix)
     })
     const nextKind = (world.nextKind + 1) % 3
     const newWorld: WorldType = { ...world, cells: newCells, nextKind };
