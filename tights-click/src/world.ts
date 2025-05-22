@@ -57,17 +57,32 @@ const getSize = (size: GameSize): { width: number; height: number; } => {
 }
 export function progressWorld(cell: CellType, world: WorldType): null | { world: WorldType, score: number } {
   if (cell.kind != world.nextKind) { return null }
-  const newDir = cell.dir + 1 + Math.floor(Math.random() * 2);
-  const newCell = { ...cell, dir: newDir, dirPrev: cell.dir, state: CellState.vanishing };
-  const newCells = world.cells.map((c) => {
-    if (c === cell) { return newCell }
-    if (c.state == CellState.vanishing) {
-      return { ...c, state: CellState.vanished }
-    }
-    return c
-  })
-  const nextKind = (world.nextKind + 1) % 3
-  const newWorld: WorldType = { ...world, cells: newCells, nextKind };
-  return { world: newWorld, score: 10 }
+  if (cell.kind == 2) {
+    const newCell = { ...cell, state: CellState.vanishing };
+    const newCells = world.cells.map((c) => {
+      if (c === cell) { return newCell }
+      switch (c.state) {
+        case CellState.vanishing:
+          return { ...c, state: CellState.vanished }
+        case CellState.fixed:
+          return { ...c, state: CellState.vanishing }
+      }
+      return c
+    })
+    const nextKind = (world.nextKind + 1) % 3
+    const newWorld: WorldType = { ...world, cells: newCells, nextKind };
+    return { world: newWorld, score: 10 }
+  } else {
+    const newCell = { ...cell, state: CellState.fixed };
+    const newCells = world.cells.map((c) => {
+      if (c === cell) { return newCell }
+      if (c.state == CellState.vanishing) {
+        return { ...c, state: CellState.vanished }
+      }
+      return c
+    })
+    const nextKind = (world.nextKind + 1) % 3
+    const newWorld: WorldType = { ...world, cells: newCells, nextKind };
+    return { world: newWorld, score: 10 }
+  }
 }
-
