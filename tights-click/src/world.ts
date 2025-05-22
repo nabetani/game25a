@@ -55,7 +55,8 @@ const getSize = (size: GameSize): { width: number; height: number; } => {
       return { width: 8, height: 12 };
   }
 }
-export function progressWorld(cell: CellType, world: WorldType): { world: WorldType, score: number } {
+export function progressWorld(cell: CellType, world: WorldType): null | { world: WorldType, score: number } {
+  if (cell.kind != world.nextKind) { return null }
   const newDir = cell.dir + 1 + Math.floor(Math.random() * 2);
   const newCell = { ...cell, dir: newDir, dirPrev: cell.dir, state: CellState.vanishing };
   const newCells = world.cells.map((c) => {

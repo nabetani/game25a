@@ -24,6 +24,7 @@ function CellSVG({ cell }: { cell: CellType }) {
   const col = pieceColor(cell.dir & 3);
   const handleClick = () => {
     const p = progressWorld(cell, world);
+    if (p == null) { return }
     updateCurrentGame({ score: currentGame.score + p.score })
     setWorld(p.world);
   };
