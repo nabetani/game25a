@@ -42,9 +42,23 @@ export const newWorld = (ix: number, size: GameSize): WorldType => {
     }
     const x = pos % width
     const y = (pos - x) / width
-    const dirPrev = dir + (rng.nextBoolean() ? 1 : -1) * rng.nextInt(1, 3)
+    const dirPrev = 0//dir + (rng.nextBoolean() ? 1 : -1) * rng.nextInt(1, 3)
     const state = CellState.placed
     cells[pos] = { dir, dirPrev, kind, state }
+    const dx = [0, 1, 0, -1][dir & 3]
+    const dy = [-1, 0, 1, 0][dir & 3]
+    for (let i = 1; ; i++) {
+      const cx = x + dx * i
+      const cy = y + dy * i
+      if (cx < 0 || width <= cx || cy < 0 || height <= cy) {
+        break
+      }
+      const p = cx + cy * width
+      if (cells[p] != null) {
+        const rot = kind + 1
+        cells[p] = { ...cells[p], dir: (cells[p].dir - rot) & 3 }
+      }
+    }
   })
   return {
     width, height,
