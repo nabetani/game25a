@@ -1,5 +1,5 @@
 import { GameSize } from "./constants";
-import { CellType, WorldType } from "./world";
+import Prando from "prando"
 
 export enum CellState { // Object.values を使うために 非const
   placed = 1,
@@ -26,13 +26,25 @@ export type WorldType = {
 
 export const newWorld = (ix: number, size: GameSize): WorldType => {
   const { width, height } = getSize(size)
-  const cells = Array.from({ length: width * height }).map((_, ix) => {
-    const dir = (ix + (ix ^ 5) * 0.3) & 3
-    const dirPrev = dir - 1 - ((ix + (ix ^ 5) * 0.7) % 3 | 0)
-    const kind = ((ix + (ix ^ 5) * 0.7) | 0) % 3
-    const states = Object.values(CellState) as CellState[];
-    const state = states[ix % states.length]
-    return { dir, dirPrev, kind, state }
+  const rng = newRNG(ix, width, height);
+  const rooms = Array.from({ length: width * height }).map((_, ix) => ix)
+  for (let i = 1; i < rooms.length; i++) {
+    const j = rng.nextInt(0, i);
+    [rooms[i], rooms[j]] = [rooms[j], rooms[i]]
+  }
+  const cells: CellType[] = []
+
+  let dir = 0
+  rooms.forEach((pos, ix) => {
+    const kind = 2 - ix % 3
+    if (kind == 2) {
+      dir = rng.nextInt(0, 3)
+    }
+    const x = pos % width
+    const y = (pos - x) / width
+    const dirPrev = dir + (rng.nextBoolean() ? 1 : -1) * rng.nextInt(1, 3)
+    const state = CellState.placed
+    cells[pos] = { dir, dirPrev, kind, state }
   })
   return {
     width, height,
@@ -55,8 +67,15 @@ const getSize = (size: GameSize): { width: number; height: number; } => {
       return { width: 8, height: 12 };
   }
 }
+function newRNG(ix: number, width: number, height: number) {
+  const rng = new Prando([ix, width, height].join("-"));
+  for (let i = 0; i < 10; ++i) { rng.next(); }
+  return rng;
+}
+
 export function progressWorld(cell: CellType, x: number, y: number, world: WorldType): null | { world: WorldType, score: number } {
   if (cell.kind != world.nextKind) { return null }
+  if (cell.state != CellState.placed) { return null }
   const rotCell = (c: CellType, ix: number): CellType => {
     const rot = cell.kind + 1
     const dir = (cell.dir) & 3
