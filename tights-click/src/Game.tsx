@@ -32,10 +32,14 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
     })
     setWorld(p.world);
   };
-  const dirTo = cell.dir & 3 + 4
-  const dirPrev = cell.dirPrev ?? cell.dir - ((x * 29 + y * 31 + cell.dir * 37 + 41) >> 2) % 3 - 1
-  const dirFrom = dirPrev - (cell.dir - dirTo)
-  const opacity = CellState.vanishing <= cell.state ? 0 : 1
+  const { dirTo, dirFrom, opacity } = ((): { dirTo: number, dirFrom: number, opacity: number } => {
+    const cellDir = cell.dir & 3 + 4
+    if (CellState.vanishing <= cell.state) {
+      return { opacity: 0, dirFrom: cellDir, dirTo: cellDir + cell.kind + 1 }
+    }
+    const dirPrev = cell.dirPrev ?? cell.dir - hashVal(x, y, cell)
+    return { opacity: 1, dirFrom: dirPrev - (cell.dir - cellDir), dirTo: cellDir }
+  })()
   return (
     <g opacity={opacity}>
       <AnimateOpacity state={cell.state} specials={currentGame.specials} />
@@ -66,6 +70,10 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
       </g>
     </g >
   );
+}
+
+function hashVal(x: number, y: number, cell: CellType): number {
+  return ((x * 29 + y * 31 + cell.dir * 37 + 41) >> 2) % 3 - 1;
 }
 
 function AnimateStrokeWidth({ cell, world, started }: { started: boolean, cell: number, world: number }): React.JSX.Element {
