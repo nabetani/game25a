@@ -8,6 +8,12 @@ export enum CellState { // Object.values を使うために 非const
   vanished = 4,
 }
 
+export enum SpecialBits {
+  unicolor = (1 << 0),
+  samex = (1 << 1),
+  samey = (1 << 2),
+}
+
 
 export type CellType = {
   kind: number;
@@ -110,15 +116,35 @@ class ScoreCalculator {
   }
   get combo(): number {
     console.log("ScoreCalculator", "combo", this.dirs, this.xs, this)
-    if (this.dirs.size != 1) {
-      return 0
+    if (this.isDirUniq()) {
+      return this.prevCombo + 1
     }
-    return this.prevCombo + 1
+    return 0
   }
-  get score(): number { return 1 }
+  isDirUniq() {
+    return this.dirs.size == 1;
+  }
+
+  get specials() {
+    return (
+      (this.isDirUniq() ? SpecialBits.unicolor : 0) |
+      (this.xs.size == 1 ? SpecialBits.samex : 0) |
+      (this.ys.size == 1 ? SpecialBits.samey : 0)
+    )
+  }
+
+  get score(): number {
+    const base = this.isDirUniq() ? (this.prevCombo + 1) * 100 : 50
+    const extra = (this.xs.size == 1 || this.ys.size == 1) ? 2 : 1
+    return base * extra
+  }
 }
 
-export function progressWorld(cell: CellType, x: number, y: number, world: WorldType): null | { world: WorldType, score: number } {
+export function progressWorld(
+  cell: CellType, x: number, y: number, world: WorldType
+): null | {
+  world: WorldType, score: number, specials: number,
+} {
   if (cell.kind != world.nextKind) { return null }
   if (cell.state != CellState.placed) { return null }
   const rotCell = (c: CellType, ix: number): CellType => {
@@ -166,7 +192,7 @@ export function progressWorld(cell: CellType, x: number, y: number, world: World
       started: true,
       combo: sc.combo,
     };
-    return { world: newWorld, score: sc.score }
+    return { world: newWorld, score: sc.score, specials: sc.specials }
   } else {
     const newCell = { ...cell, state: CellState.fixed };
     const newCells = world.cells.map((c, ix) => {
@@ -181,6 +207,6 @@ export function progressWorld(cell: CellType, x: number, y: number, world: World
     })
     const nextKind = (world.nextKind + 1) % 3
     const newWorld: WorldType = { ...world, cells: newCells, nextKind, started: true };
-    return { world: newWorld, score: 10 }
+    return { world: newWorld, score: 10, specials: 0 }
   }
 }
