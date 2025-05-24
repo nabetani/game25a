@@ -29,7 +29,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
     setWorld(p.world);
   };
   const dirTo = cell.dir & 3 + 4
-  const dirPrev = cell.dirPrev ?? cell.dir
+  const dirPrev = cell.dirPrev ?? cell.dir - ((x * 29 + y * 31 + cell.dir * 37 + 41) >> 2) % 3 - 1
   const dirFrom = dirPrev - (cell.dir - dirTo)
   const opacity = CellState.vanishing <= cell.state ? 0 : 1
   return (
@@ -38,8 +38,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
       <g>
         <AnimateTransfromShake state={cell.state} />
         <g transform={`rotate(${dirTo * 90})`}>
-          {cell.dirPrev != null &&
-            <AnimateTransfromRotate dirFrom={dirFrom} dirTo={dirTo} />}
+          <AnimateTransfromRotate dirFrom={dirFrom} dirTo={dirTo} />
           <g>
             <path
               key={[dirFrom, dirTo].join(" ")}
@@ -61,7 +60,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
           </text>
         </g>
       </g>
-    </g>
+    </g >
   );
 }
 
@@ -181,7 +180,7 @@ function AnimateColor({ dirFrom, dirTo, cell }:
     }
   }, [dirFrom, dirTo]);
   const n = 10
-  const colors = Array.from({ length: n }).map(
+  const colors = Array.from({ length: n + 1 }).map(
     (_, ix) => pieceColor(dirFrom + (dirTo - dirFrom) / n * ix)).join(";")
   return <>
     <animate
