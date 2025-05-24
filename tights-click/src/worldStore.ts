@@ -9,6 +9,7 @@ interface WorldState {
 const initialWorldState: WorldType = {
   width: 1,
   height: 1,
+  started: false,
   cells: [],
   nextKind: 0,
   combo: 0,

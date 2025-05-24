@@ -25,7 +25,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
   const handleClick = () => {
     const p = progressWorld(cell, x, y, world);
     if (p == null) { return }
-    updateCurrentGame({ score: currentGame.score + p.score })
+    updateCurrentGame({ score: currentGame.score + p.score, combo: p.world.combo })
     setWorld(p.world);
   };
   const dirTo = cell.dir & 3 + 4

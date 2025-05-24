@@ -88,6 +88,36 @@ function newRNG(ix: number, width: number, height: number) {
   return rng;
 }
 
+class ScoreCalculator {
+  constructor(world: WorldType) {
+    this.width = world.width
+    this.height = world.height
+    this.prevCombo = world.combo
+  }
+  prevCombo: number
+  width: number
+  height: number
+  xs: Set<number> = new Set<number>;
+  ys: Set<number> = new Set<number>;
+  dirs: Set<number> = new Set<number>;
+  add(cell: CellType, ix: number) {
+    const x = ix % this.width
+    const y = (ix - x) / this.width
+    this.xs.add(x)
+    this.ys.add(y)
+    console.log("add dir", cell.dir, cell.dir & 3)
+    this.dirs.add(cell.dir & 3)
+  }
+  get combo(): number {
+    console.log("ScoreCalculator", "combo", this.dirs, this.xs, this)
+    if (this.dirs.size != 1) {
+      return 0
+    }
+    return this.prevCombo + 1
+  }
+  get score(): number { return 1 }
+}
+
 export function progressWorld(cell: CellType, x: number, y: number, world: WorldType): null | { world: WorldType, score: number } {
   if (cell.kind != world.nextKind) { return null }
   if (cell.state != CellState.placed) { return null }
@@ -112,19 +142,31 @@ export function progressWorld(cell: CellType, x: number, y: number, world: World
   }
   if (cell.kind == 2) {
     const newCell = { ...cell, state: CellState.vanishing };
+    const sc = new ScoreCalculator(world)
     const newCells = world.cells.map((c, ix) => {
-      if (c === cell) { return newCell }
+      if (c === cell) {
+        sc.add(c, ix)
+        return newCell
+      }
       switch (c.state) {
         case CellState.vanishing:
           return { ...c, state: CellState.vanished }
         case CellState.fixed:
+          sc.add(c, ix)
           return { ...c, state: CellState.vanishing }
       }
       return rotCell(c, ix)
     })
     const nextKind = (world.nextKind + 1) % 3
-    const newWorld: WorldType = { ...world, cells: newCells, nextKind, started: true };
-    return { world: newWorld, score: 10 }
+    const newWorld: WorldType = {
+      ...world,
+      cells:
+        newCells,
+      nextKind,
+      started: true,
+      combo: sc.combo,
+    };
+    return { world: newWorld, score: sc.score }
   } else {
     const newCell = { ...cell, state: CellState.fixed };
     const newCells = world.cells.map((c, ix) => {
