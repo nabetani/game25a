@@ -9,6 +9,7 @@ const pieceColor = (dir: number): string => {
 }
 
 const animationDur = "1.25s"
+const animationDurShort = "1s"
 function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
   const { setWorld, world } = useWorldStore();
   const { currentGame, updateCurrentGame } = useCurrentGameStore();
@@ -217,6 +218,71 @@ function mapXY<T>(w: { width: number, height: number }, proc: (x: number, y: num
   return r
 }
 
+function AnimateSameLineEffect(
+  { x, y, scaleValues }: { x: number | null | undefined, y: number | null | undefined, scaleValues: string }
+): React.JSX.Element {
+  const aniTransRef = useRef<SVGAnimateTransformElement>(null);
+  const aniRef = useRef<SVGAnimateElement>(null);
+  useEffect(() => {
+    if (aniTransRef.current != null) {
+      aniTransRef.current.beginElement(); // アニメーション開始
+    }
+    if (aniRef.current != null) {
+      aniRef.current.beginElement(); // アニメーション開始
+    }
+  }, [x, y]);
+  return <>
+    <animate
+      ref={aniRef}
+      attributeName='opacity'
+      values="1;0"
+      dur={animationDurShort}
+      repeatCount={1} />
+
+    <animateTransform
+      ref={aniTransRef}
+      attributeName="transform"
+      attributeType="XML"
+      type="scale"
+      values={scaleValues}
+      dur={animationDur}
+      repeatCount="1" />
+  </>
+}
+
+function SameLineEffect(
+  { centerXY }: { centerXY: (x: number, y: number) => [number, number] }
+): React.JSX.Element {
+  const { currentGame } = useCurrentGameStore();
+  const { world } = useWorldStore();
+  const x = currentGame.specials.x
+  const y = currentGame.specials.y
+  if (x == null && y == null) {
+    return <></>
+  }
+  if (x != null) {
+    const [x0, y0] = centerXY(x - 0.5, -0.5)
+    const [x1, y1] = centerXY(x + 0.5, world.height - 0.5)
+    const w = x1 - x0
+    const h = y1 - y0
+    return <g transform={`translate(${x0 + w / 2} ${y0 + h / 2})`}>
+      <rect x={-w / 2} y={-h / 2} width={w} height={h} opacity={0}>
+        <AnimateSameLineEffect x={x} y={y} scaleValues='0 1;3 1' />
+      </rect>
+    </g>
+  }
+  const [x0, y0] = centerXY(-0.5, y! - 0.5)
+  const [x1, y1] = centerXY(world.width - 0.5, y! + 0.5)
+  const w = x1 - x0
+  const h = y1 - y0
+  return <g transform={`translate(${x0 + w / 2} ${y0 + h / 2})`}>
+    <rect x={-w / 2} y={-h / 2} width={w} height={h} opacity={0}>
+      <AnimateSameLineEffect x={x} y={y} scaleValues='1 0;1 3' />
+    </rect>
+  </g>
+
+}
+
 function WorldSVG(): React.JSX.Element {
   const { world } = useWorldStore();
   const { width, height } = world;
@@ -228,9 +294,11 @@ function WorldSVG(): React.JSX.Element {
   const vw = 90;
   const styleW = `${vw}vw`;
   const styleH = `${vw / svgVW * svgVH}vw`;
+  const centerXY = (x: number, y: number): [number, number] => {
+    return [pad + (x + 0.5) * cellStep, pad + (y + 0.5) * cellStep]
+  }
   const placeCell = (cell: CellType, x: number, y: number): React.JSX.Element => {
-    const tx = pad + (x + 0.5) * cellStep
-    const ty = pad + (y + 0.5) * cellStep
+    const [tx, ty] = centerXY(x, y)
     return (
       <g key={[x, y].join(" ")} transform={`translate(${tx} ${ty})`}>
         {cell != null && <CellSVG x={x} y={y} cell={cell} />}
@@ -253,6 +321,9 @@ function WorldSVG(): React.JSX.Element {
           if (CellState.vanishing <= cell.state) { return null }
           return placeCell(cell, x, y)
         })}
+        <g pointerEvents="none" >
+          <SameLineEffect centerXY={centerXY} />
+        </g>
         {mapXY(world, (x, y) => {
           const cell = world.cells[x + y * world.width];
           if (!(CellState.vanishing <= cell.state)) { return null }
