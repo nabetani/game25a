@@ -51,7 +51,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
                 handleClick()
               }}
             >
-              <AnimateStrokeWidth cell={cell.kind} world={world.nextKind} />
+              <AnimateStrokeWidth cell={cell.kind} started={world.started} world={world.nextKind} />
               <AnimateColor dirFrom={dirFrom} dirTo={dirTo} cell={cell} />
             </path>
           </g>
@@ -64,7 +64,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
   );
 }
 
-function AnimateStrokeWidth({ cell, world }: { cell: number, world: number }): React.JSX.Element {
+function AnimateStrokeWidth({ cell, world, started }: { started: boolean, cell: number, world: number }): React.JSX.Element {
   const aniRef = useRef<SVGAnimateElement>(null);
   const cur = cell == world
   const vani = 0 == ((cell - world + 1) % 3 + 3) % 3
@@ -74,7 +74,7 @@ function AnimateStrokeWidth({ cell, world }: { cell: number, world: number }): R
     }
   }, [cur, vani]);
   if (!cur && !vani) { return <></> }
-  const values = (cur ? [0, 0.1] : [0.1, 0]).join(";")
+  const values = (cur ? [0, 0.1] : [started ? 0.1 : 0, 0]).join(";")
   return <animate
     ref={aniRef}
     attributeName='stroke-width'

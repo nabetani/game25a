@@ -21,6 +21,7 @@ export type WorldType = {
   height: number,
   cells: CellType[];
   nextKind: number;
+  started: boolean;
   combo: number;
 }
 
@@ -63,6 +64,7 @@ export const newWorld = (ix: number, size: GameSize): WorldType => {
     width, height,
     cells,
     nextKind: 0,
+    started: false,
     combo: 0,
   }
 }
@@ -121,7 +123,7 @@ export function progressWorld(cell: CellType, x: number, y: number, world: World
       return rotCell(c, ix)
     })
     const nextKind = (world.nextKind + 1) % 3
-    const newWorld: WorldType = { ...world, cells: newCells, nextKind };
+    const newWorld: WorldType = { ...world, cells: newCells, nextKind, started: true };
     return { world: newWorld, score: 10 }
   } else {
     const newCell = { ...cell, state: CellState.fixed };
@@ -136,7 +138,7 @@ export function progressWorld(cell: CellType, x: number, y: number, world: World
       return rotCell(c, ix)
     })
     const nextKind = (world.nextKind + 1) % 3
-    const newWorld: WorldType = { ...world, cells: newCells, nextKind };
+    const newWorld: WorldType = { ...world, cells: newCells, nextKind, started: true };
     return { world: newWorld, score: 10 }
   }
 }
