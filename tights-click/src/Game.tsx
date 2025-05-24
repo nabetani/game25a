@@ -73,7 +73,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
 }
 
 function hashVal(x: number, y: number, cell: CellType): number {
-  return ((x * 29 + y * 31 + cell.dir * 37 + 41) >> 2) % 3 - 1;
+  return ((x * 29 + y * 31 + cell.dir * 37 + 41) >> 2) % 3 + 1;
 }
 
 function AnimateStrokeWidth({ cell, world, started }: { started: boolean, cell: number, world: number }): React.JSX.Element {
