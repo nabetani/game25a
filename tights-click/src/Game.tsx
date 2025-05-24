@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { StageIDType, splitStageID } from './constants';
-import { useCurrentGameStore } from './current_game_store';
+import { Specials, useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
 import { CellState, CellType, progressWorld, WorldType } from './world';
 
@@ -25,7 +25,11 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
   const handleClick = () => {
     const p = progressWorld(cell, x, y, world);
     if (p == null) { return }
-    updateCurrentGame({ score: currentGame.score + p.score, combo: p.world.combo })
+    updateCurrentGame({
+      score: currentGame.score + p.score,
+      combo: p.world.combo,
+      specials: p.specials,
+    })
     setWorld(p.world);
   };
   const dirTo = cell.dir & 3 + 4
@@ -34,7 +38,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
   const opacity = CellState.vanishing <= cell.state ? 0 : 1
   return (
     <g opacity={opacity}>
-      <AnimateOpacity state={cell.state} />
+      <AnimateOpacity state={cell.state} specials={currentGame.specials} />
       <g>
         <AnimateTransfromShake state={cell.state} />
         <g transform={`rotate(${dirTo * 90})`}>
@@ -104,7 +108,7 @@ function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: nu
   </>
 }
 
-function AnimateOpacity({ state }: { state: CellState }): React.JSX.Element {
+function AnimateOpacity({ state, specials }: { specials: Specials, state: CellState }): React.JSX.Element {
   const aniRef = useRef<SVGAnimateElement>(null);
   const aniTRef = useRef<SVGAnimateTransformElement>(null);
   useEffect(() => {
@@ -116,6 +120,7 @@ function AnimateOpacity({ state }: { state: CellState }): React.JSX.Element {
     }
   }, [state]);
   if (state != CellState.vanishing) { return <></> }
+  const scaleValues = specials.unicolor ? "1;10" : "1;2"
   return <>
     <animate
       ref={aniRef}
@@ -127,7 +132,7 @@ function AnimateOpacity({ state }: { state: CellState }): React.JSX.Element {
       ref={aniTRef}
       key={state}
       dur={animationDur}
-      values="1;10"
+      values={scaleValues}
       repeatCount={1}
       type="scale"
 

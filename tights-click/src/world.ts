@@ -1,5 +1,6 @@
 import { GameSize } from "./constants";
 import Prando from "prando"
+import { Specials } from "./current_game_store";
 
 export enum CellState { // Object.values を使うために 非const
   placed = 1,
@@ -7,13 +8,6 @@ export enum CellState { // Object.values を使うために 非const
   vanishing = 3,
   vanished = 4,
 }
-
-export enum SpecialBits {
-  unicolor = (1 << 0),
-  samex = (1 << 1),
-  samey = (1 << 2),
-}
-
 
 export type CellType = {
   kind: number;
@@ -126,11 +120,12 @@ class ScoreCalculator {
   }
 
   get specials() {
-    return (
-      (this.isDirUniq() ? SpecialBits.unicolor : 0) |
-      (this.xs.size == 1 ? SpecialBits.samex : 0) |
-      (this.ys.size == 1 ? SpecialBits.samey : 0)
-    )
+    const r: Specials = {
+      unicolor: this.isDirUniq(),
+      x: (this.xs.size == 1 ? [...this.xs][0] : undefined),
+      y: (this.ys.size == 1 ? [...this.ys][0] : undefined),
+    }
+    return r
   }
 
   get score(): number {
@@ -143,7 +138,7 @@ class ScoreCalculator {
 export function progressWorld(
   cell: CellType, x: number, y: number, world: WorldType
 ): null | {
-  world: WorldType, score: number, specials: number,
+  world: WorldType, score: number, specials: Specials
 } {
   if (cell.kind != world.nextKind) { return null }
   if (cell.state != CellState.placed) { return null }
@@ -207,6 +202,6 @@ export function progressWorld(
     })
     const nextKind = (world.nextKind + 1) % 3
     const newWorld: WorldType = { ...world, cells: newCells, nextKind, started: true };
-    return { world: newWorld, score: 10, specials: 0 }
+    return { world: newWorld, score: 10, specials: {} }
   }
 }
