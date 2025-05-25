@@ -6,10 +6,18 @@ export type Specials = {
   y?: number | null,
 }
 
+export enum GamePhase {
+  started = 1,
+  playing = 2,
+  completed = 3,
+}
+
 export type CurrentGame = {
   score: number;
   combo: number;
   specials: Specials;
+  phase: GamePhase,
+  rest?: number;
 };
 
 type CurrentGameStore = {
@@ -18,7 +26,7 @@ type CurrentGameStore = {
 };
 
 export const useCurrentGameStore = create<CurrentGameStore>((set) => ({
-  currentGame: { score: 0, combo: 0, specials: {} },
+  currentGame: { score: 0, combo: 0, specials: {}, phase: GamePhase.started },
   updateCurrentGame: (newSum: Partial<CurrentGame>) =>
     set((state) => ({
       currentGame: { ...state.currentGame, ...newSum },
