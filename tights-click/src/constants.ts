@@ -20,11 +20,6 @@ export const enum Phase {
   Completed = 4,
 }
 
-export interface PhaseProps {
-  phase: Phase;
-  setPhase: (_: Phase) => void;
-}
-
 export type StageIDType = string;
 
 export const makeStageID = (course: number, size: number): StageIDType => {

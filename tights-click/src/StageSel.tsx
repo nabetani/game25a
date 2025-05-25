@@ -1,12 +1,14 @@
 import React from 'react';
-import { GameSize, gameSizeNumbers, makeStageID, Phase, PhaseProps, PlayingStageProps } from './constants';
+import { GameSize, gameSizeNumbers, makeStageID, Phase, PlayingStageProps } from './constants';
 import { useStageStore } from './stage_store';
 import { useCurrentGameStore } from './current_game_store';
 import { useStageSelStore } from './stage_sel_store';
 import useWorldStore from './worldStore';
 import { newWorld } from './world';
+import { usePhaseStore } from './phaseStore';
 
-const StageSel: React.FC<PhaseProps & PlayingStageProps> = ({ phase, setPhase, stage, setStage }) => {
+const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
+  const { phase, setPhase } = usePhaseStore();
   const { stageStates, updateStageUnit } = useStageStore()
   const { updateCurrentGame } = useCurrentGameStore();
   const { sizeID, setSizeID, soundOn, setSoundOn } = useStageSelStore();

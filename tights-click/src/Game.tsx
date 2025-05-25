@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { StageIDType, splitStageID } from './constants';
+import { Phase, StageIDType, splitStageID } from './constants';
 import { GamePhase, Specials, useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
 import { CellState, CellType, progressWorld, WorldType } from './world';
+import { usePhaseStore } from './phaseStore';
 
 const pieceColor = (dir: number): string => {
   return `oklch(0.8 0.4 ${dir * 90 + 10}`
@@ -349,13 +350,14 @@ import { useStageSelStore } from './stage_sel_store';
 function CompletedUI(): React.JSX.Element {
   const { currentGame } = useCurrentGameStore();
   const { setSizeID } = useStageSelStore();
+  const { phase, setPhase } = usePhaseStore();
   const text = `I scored ${currentGame.score} in Tights Click!`;
   const url = `https://taittsuu.com/share?text=${encodeURIComponent(text)}`;
   return (
     <div>
       <h2>Completed!</h2>
       <p>Score: {currentGame.score}</p>
-      <button onClick={() => setSizeID(null)}>Back to Title</button>
+      <button onClick={() => setPhase(Phase.StageSel)}>Back to Title</button>
       <button onClick={() => window.open(url, '_blank')}>タイーツ</button>
     </div>
   );

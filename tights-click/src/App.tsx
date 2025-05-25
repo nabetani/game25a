@@ -4,13 +4,14 @@ import "./stage_store";
 import { Phase, StageIDType } from './constants';
 import StageSel from './StageSel';
 import Game from './Game';
+import { usePhaseStore } from './phaseStore';
 
 export function App() {
-  const [phase, setPhase] = useState<Phase>(Phase.StageSel)
-  const [stage, setStage] = useState<StageIDType | null>(null)
+  const { phase } = usePhaseStore();
+  const [stage, setStage] = useState<StageIDType | null>(null);
   switch (phase) {
     case Phase.StageSel:
-      return <StageSel phase={phase} setPhase={setPhase} stage={stage} setStage={setStage} />
+      return <StageSel stage={stage} setStage={setStage} />;
     default:
       return <Game stage={stage} />;
   }
