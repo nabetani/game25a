@@ -344,6 +344,10 @@ function WorldSVG(): React.JSX.Element {
   );
 }
 
+function CompletedUI(): React.JSX.Element {
+  return <>completed</>
+}
+
 interface GameProps {
   stage: StageIDType | null;
 }
@@ -377,9 +381,9 @@ const Game: React.FC<GameProps> = ({ stage }) => {
         <p>Score: {currentGame.score}</p>
         <p>Combo: {currentGame.combo}</p>
         <p>Rest: {currentGame.rest ?? "??"}</p>
-        {currentGame.phase == GamePhase.completed && <p>completed</p>}
       </div>
       <WorldSVG />
+      {currentGame.phase == GamePhase.completed && <CompletedUI />}
     </div>
   );
 };
