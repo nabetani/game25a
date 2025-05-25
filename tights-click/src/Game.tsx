@@ -221,24 +221,33 @@ function mapXY<T>(w: { width: number, height: number }, proc: (x: number, y: num
 function AnimateSameLineEffect(
   { x, y, scaleValues }: { x: number | null | undefined, y: number | null | undefined, scaleValues: string }
 ): React.JSX.Element {
+  interface B { beginElement(): void }
   const aniTransRef = useRef<SVGAnimateTransformElement>(null);
-  const aniRef = useRef<SVGAnimateElement>(null);
+  const aniOpacityRef = useRef<SVGAnimateElement>(null);
+  const aniColorRef = useRef<SVGAnimateElement>(null);
   useEffect(() => {
-    if (aniTransRef.current != null) {
-      aniTransRef.current.beginElement(); // アニメーション開始
-    }
-    if (aniRef.current != null) {
-      aniRef.current.beginElement(); // アニメーション開始
-    }
+    [aniTransRef,
+      aniOpacityRef,
+      aniColorRef
+    ].forEach(e => (e.current != null) && e.current.beginElement()); // アニメーション開始
   }, [x, y]);
+  const colCount = 36
+  const colors = Array.from({ length: colCount }).map((_, ix) => (
+    `oklch(0.8 0.4 ${ix * 360 * 2 / colCount})`
+  )).join(";")
   return <>
     <animate
-      ref={aniRef}
+      ref={aniOpacityRef}
       attributeName='opacity'
       values="1;0"
       dur={animationDurShort}
       repeatCount={1} />
-
+    <animate
+      ref={aniColorRef}
+      attributeName='fill'
+      values={colors}
+      dur={animationDurShort}
+      repeatCount={1} />
     <animateTransform
       ref={aniTransRef}
       attributeName="transform"
