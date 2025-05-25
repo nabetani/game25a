@@ -20,7 +20,7 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
     updateStageUnit(stageID, { ...selected, trialCount: (selected?.trialCount ?? 0) + 1 });
     updateCurrentGame({ score: 0, combo: 0 });
     setStage(stageID);
-    setPhase(Phase.Playing);
+    setPhase(Phase.Started);
     setWorld(newWorld(ix, size))
   }
   return (

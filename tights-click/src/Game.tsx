@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Phase, StageIDType, splitStageID } from './constants';
-import { GamePhase, Specials, useCurrentGameStore } from './current_game_store';
+import { Specials, useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
 import { CellState, CellType, progressWorld, WorldType } from './world';
 import { usePhaseStore } from './phaseStore';
@@ -370,21 +370,23 @@ interface GameProps {
 const Game: React.FC<GameProps> = ({ stage }) => {
   const { currentGame, updateCurrentGame } = useCurrentGameStore();
   const { world } = useWorldStore();
+  const { phase, setPhase } = usePhaseStore();
   if (!stage) {
     return <div>No stage selected.</div>;
   }
   React.useEffect(() => {
-    switch (currentGame.phase) {
-      case GamePhase.started:
-        updateCurrentGame({ phase: GamePhase.playing, rest: world.width * world.height })
+    switch (phase) {
+      case Phase.Started:
+        updateCurrentGame({ rest: world.width * world.height })
+        setPhase(Phase.Playing)
         break
-      case GamePhase.playing:
+      case Phase.Playing:
         if (currentGame.rest === 0) {
-          updateCurrentGame({ phase: GamePhase.completed })
+          setPhase(Phase.Completed)
         }
         break
     }
-  }, [currentGame.phase, currentGame.rest])
+  }, [phase, currentGame.rest])
 
   const { course, size } = splitStageID(stage);
 
@@ -398,7 +400,7 @@ const Game: React.FC<GameProps> = ({ stage }) => {
         <p>Rest: {currentGame.rest ?? "??"}</p>
       </div>
       <WorldSVG />
-      {currentGame.phase == GamePhase.completed && <CompletedUI />}
+      {phase == Phase.Completed && <CompletedUI />}
     </div>
   );
 };
