@@ -349,13 +349,12 @@ import { useStageSelStore } from './stage_sel_store';
 
 function CompletedUI(): React.JSX.Element {
   const { currentGame } = useCurrentGameStore();
-  const { setSizeID } = useStageSelStore();
   const { phase, setPhase } = usePhaseStore();
   const text = `I scored ${currentGame.score} in Tights Click!`;
   const url = `https://taittsuu.com/share?text=${encodeURIComponent(text)}`;
   return (
-    <div>
-      <h2>Completed!</h2>
+    <div id="completed">
+      <p>Completed!</p>
       <p>Score: {currentGame.score}</p>
       <button onClick={() => setPhase(Phase.StageSel)}>Back to Title</button>
       <button onClick={() => window.open(url, '_blank')}>タイーツ</button>
