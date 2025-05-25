@@ -15,9 +15,9 @@ export const gameSizeNumbers = (): GameSize[] => {
 
 export const enum Phase {
   StageSel = 1,
-  Playing = 2,
-  GameOver = 3,
-  Cleared = 4,
+  Started = 2,
+  Playing = 3,
+  Completed = 4,
 }
 
 export interface PhaseProps {

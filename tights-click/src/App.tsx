@@ -11,11 +11,7 @@ export function App() {
   switch (phase) {
     case Phase.StageSel:
       return <StageSel phase={phase} setPhase={setPhase} stage={stage} setStage={setStage} />
-    case Phase.Playing:
-    case Phase.GameOver:
-    case Phase.Cleared:
-      return <Game stage={stage} />;
     default:
-      return <></>
+      return <Game stage={stage} />;
   }
 }
