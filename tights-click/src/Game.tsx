@@ -30,7 +30,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
       score: currentGame.score + p.score,
       combo: p.world.combo,
       specials: p.specials,
-      rest: currentGame.rest - 1,
+      rest: (currentGame.rest || 0) - 1,
     })
     setWorld(p.world);
   };
@@ -344,8 +344,21 @@ function WorldSVG(): React.JSX.Element {
   );
 }
 
+import { useStageSelStore } from './stage_sel_store';
+
 function CompletedUI(): React.JSX.Element {
-  return <>completed</>
+  const { currentGame } = useCurrentGameStore();
+  const { setSizeID } = useStageSelStore();
+  const text = `I scored ${currentGame.score} in Tights Click!`;
+  const url = `https://taittsuu.com/share?text=${encodeURIComponent(text)}`;
+  return (
+    <div>
+      <h2>Completed!</h2>
+      <p>Score: {currentGame.score}</p>
+      <button onClick={() => setSizeID(null)}>Back to Title</button>
+      <button onClick={() => window.open(url, '_blank')}>タイーツ</button>
+    </div>
+  );
 }
 
 interface GameProps {
