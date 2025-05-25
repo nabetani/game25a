@@ -1,5 +1,5 @@
 import React from 'react';
-import { GameSize, gameSizeNumbers, makeStageID, Phase, PhaseProps, PlayingStageProps } from './constants';
+import { GameSize, gameSizeNumbers, makeStageID, AppPhase, PhaseProps, PlayingStageProps } from './constants';
 import { useStageStore } from './stage_store';
 import { useCurrentGameStore } from './current_game_store';
 import { useStageSelStore } from './stage_sel_store';
@@ -18,7 +18,7 @@ const StageSel: React.FC<PhaseProps & PlayingStageProps> = ({ phase, setPhase, s
     updateStageUnit(stageID, { ...selected, trialCount: (selected?.trialCount ?? 0) + 1 });
     updateCurrentGame({ score: 0, combo: 0 });
     setStage(stageID);
-    setPhase(Phase.Playing);
+    setPhase(AppPhase.Playing);
     setWorld(newWorld(ix, size))
   }
   return (
