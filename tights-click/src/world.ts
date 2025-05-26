@@ -129,7 +129,7 @@ class ScoreCalculator {
   }
 
   get score(): number {
-    const base = this.isDirUniq() ? (this.prevCombo + 1) * 100 : 50
+    const base = this.isDirUniq() ? (this.prevCombo + 2) * 100 : 100
     const extra = (this.xs.size == 1 || this.ys.size == 1) ? 2 : 1
     return base * extra
   }
@@ -202,6 +202,6 @@ export function progressWorld(
     })
     const nextKind = (world.nextKind + 1) % 3
     const newWorld: WorldType = { ...world, cells: newCells, nextKind, started: true };
-    return { world: newWorld, score: 10, specials: {} }
+    return { world: newWorld, score: 0, specials: {} }
   }
 }

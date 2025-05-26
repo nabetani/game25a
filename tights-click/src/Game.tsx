@@ -345,10 +345,24 @@ function WorldSVG(): React.JSX.Element {
   );
 }
 
-import { useStageSelStore } from './stage_sel_store';
+
+const rankText = (score: number, size: { width: number, height: number }): string => {
+  const count = Math.floor(size.width * size.height / 3)
+  const low = count * 100
+  const s0 = 200
+  const sL = count * 100 + 100
+  const hi = (s0 + sL) * count / 2
+  if (hi <= score) { return "incredible!" }
+  const r = 100 * (score - low) / (hi - low)
+  if (50 <= r) { return "awesome!" }
+  if (15 <= r) { return "well done!" }
+  if (5 <= r) { return "good job!" }
+  return "you made it!"
+}
 
 function CompletedUI(): React.JSX.Element {
   const { currentGame } = useCurrentGameStore();
+  const { world } = useWorldStore();
   const { phase, setPhase } = usePhaseStore();
   const text = `I scored ${currentGame.score} in Tights Click!`;
   const url = `https://taittsuu.com/share?text=${encodeURIComponent(text)}`;
@@ -356,6 +370,7 @@ function CompletedUI(): React.JSX.Element {
     <div id="completed">
       <p>Completed!</p>
       <p>Score: {currentGame.score}</p>
+      <p>{rankText(currentGame.score, world)}</p>
       <button onClick={() => setPhase(Phase.StageSel)}>Back to Title</button>
       <button onClick={() => window.open(url, '_blank')}>タイーツ</button>
     </div>
@@ -376,7 +391,10 @@ const Game: React.FC<GameProps> = ({ stage }) => {
   React.useEffect(() => {
     switch (phase) {
       case Phase.Started:
-        updateCurrentGame({ rest: world.width * world.height })
+        updateCurrentGame({
+          rest: world.width * world.height,
+          specials: {},
+        })
         setPhase(Phase.Playing)
         break
       case Phase.Playing:
