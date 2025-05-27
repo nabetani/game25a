@@ -1,9 +1,16 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Phase, StageIDType, splitStageID } from './constants';
 import { Specials, useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
 import { CellState, CellType, progressWorld, WorldType } from './world';
 import { usePhaseStore } from './phaseStore';
+import mitt from 'mitt';
+
+type MittEvents = {
+  addScore: string | null;
+};
+
+const emitter = mitt<MittEvents>();
 
 const pieceColor = (dir: number): string => {
   return `oklch(0.8 0.4 ${dir * 90 + 10}`
@@ -34,6 +41,10 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
       rest: (currentGame.rest || 0) - 1,
     })
     setWorld(p.world);
+    if (0 < (p.score ?? 0)) {
+      console.log("addScore", `+${p.score}`)
+      emitter.emit("addScore", `+${p.score}`)
+    }
   };
   const { dirTo, dirFrom, opacity } = ((): { dirTo: number, dirFrom: number, opacity: number } => {
     const cellDir = cell.dir & 3 + 4
@@ -294,6 +305,66 @@ function SameLineEffect(
 
 }
 
+function AnimateScaleScore(): React.JSX.Element {
+  const aniTransRef = useRef<SVGAnimateTransformElement>(null);
+  useEffect(() => {
+    const o = aniTransRef.current
+    if (o == null) { return }
+    o.beginElement(); // アニメーション開始
+    const onEndEvent = () => { emitter.emit("addScore", null) }
+    o.addEventListener("endEvent", onEndEvent)
+    return () => { o.removeEventListener("endEvent", onEndEvent) }
+  }, []);
+  return <>
+    <animateTransform
+      ref={aniTransRef}
+      attributeName="transform"
+      attributeType="XML"
+      type="scale"
+      values="1;10"
+      dur={animationDur}
+      repeatCount="1" />
+  </>
+}
+
+function AnimateOpacityScore(): React.JSX.Element {
+  const aniRef = useRef<SVGAnimateElement>(null);
+  useEffect(() => {
+    if (aniRef.current != null) {
+      aniRef.current.beginElement(); // アニメーション開始
+    }
+  }, []);
+  const values = "0;" + Array.from({ length: 10 }).map((_, ix) => (9 - ix) * 0.1).join(";")
+  return <>
+    <animate
+      ref={aniRef}
+      attributeName='opacity'
+      values={values}
+      dur={animationDur}
+      repeatCount={1} />
+  </>
+}
+
+function ScoreDiff(): React.JSX.Element {
+  const [text, setText] = useState<string | null>(null)
+  useEffect(() => {
+    function onAddScore(t: string | null) {
+      console.log("onAddScore", t)
+      setText(t)
+    }
+    emitter.on("addScore", onAddScore)
+    return () => { emitter.off("addScore", onAddScore) }
+  }, [])
+  if (text == null) { return <g id="empty?"></g> }
+  return <g key={text} opacity={0}>
+    <AnimateScaleScore />
+    <AnimateOpacityScore />
+    <text x={0} y={0}>{text}</text>
+  </g>
+
+}
+
+
 function WorldSVG(): React.JSX.Element {
   const { world } = useWorldStore();
   const { width, height } = world;
@@ -340,6 +411,15 @@ function WorldSVG(): React.JSX.Element {
           if (!(CellState.vanishing <= cell.state)) { return null }
           return placeCell(cell, x, y)
         })}
+      </g>
+      <g
+        fontFamily='Cherry Bomb One'
+        dominantBaseline="middle" textAnchor="middle"
+        fontSize={svgVW / 20}
+        transform={`translate(${svgVW / 2} ${svgVH / 2})`}
+        style={{ pointerEvents: "none" }}
+      >
+        <ScoreDiff />
       </g>
     </svg>
   );
