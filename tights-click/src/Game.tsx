@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Phase, StageIDType, splitStageID } from './constants';
+import { GameSize, Phase, StageIDType, splitStageID } from './constants';
 import { Specials, useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
 import { CellState, CellType, progressWorld, WorldType } from './world';
@@ -509,14 +509,17 @@ const Game: React.FC<GameProps> = ({ stage }) => {
 
   const { course, size } = splitStageID(stage);
 
+  const title = `${GameSize[size]} #${course}`
+
   return (
     <div>
-      <div>
-        <p>Course: {course}</p>
-        <p>Size: {size}</p>
-        <p>Score: {currentGame.score}</p>
-        <p>Combo: {currentGame.combo}</p>
-        <p>Rest: {currentGame.rest ?? "??"}</p>
+      <div id="game-state-panel">
+        <p id="title">{title}</p>
+        <p id="score-text">
+          <span id="score-num">{currentGame.score}</span>
+          <span id="score-unit">pts.</span>
+        </p>
+        <p id="combo">{currentGame.combo} Combo</p>
       </div>
       <WorldSVG />
       {phase == Phase.Completed && <CompletedUI />}

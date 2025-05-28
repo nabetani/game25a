@@ -1,3 +1,10 @@
+:root {
+  --w: min(calc(100lvh / 2.2), 100lvw);
+  --h: min(100lvh, calc(100lvw*2.2));
+  --u: calc(var(--w)/100);
+  --bo: calc(var(--w)/200);
+}
+
 html {
   color-scheme: light dark;
   font-family: system-ui;
@@ -23,4 +30,22 @@ html {
   margin: 10% auto auto 10%;
   border: solid #eee 1px;
   background-color: rgba(255, 255, 255, 0.9);
+}
+
+#game-state-panel {
+  font-family: 'Cherry Bomb One';
+  font-size: calc(var(--u)*10);
+  margin: 0;
+  padding: 0;
+
+  #score-unit {
+    font-size: calc(var(--u)*8);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    border: solid red 1px;
+  }
+
 }
