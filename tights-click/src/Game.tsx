@@ -449,16 +449,15 @@ function WorldSVG(): React.JSX.Element {
 }
 
 
-const rankText = (score: number, size: { width: number, height: number }): string => {
-  const count = Math.floor(size.width * size.height / 3)
+const rankText = (score: number, count: number): string => {
   const low = count * 100
   const s0 = 200
   const sL = count * 100 + 100
   const hi = (s0 + sL) * count / 2
-  if (hi <= score) { return "incredible!" }
+  if (8 < count && hi <= score) { return "incredible!" }
   const r = 100 * (score - low) / (hi - low)
-  if (50 <= r) { return "awesome!" }
-  if (15 <= r) { return "well done!" }
+  if (6 < count && 50 <= r) { return "awesome!" }
+  if (4 < count && 15 <= r) { return "well done!" }
   if (5 <= r) { return "good job!" }
   return "you made it!"
 }
@@ -473,7 +472,7 @@ function CompletedUI(): React.JSX.Element {
     <div id="completed">
       <p>Completed!</p>
       <p>Score: {currentGame.score}</p>
-      <p>{rankText(currentGame.score, world)}</p>
+      <p>{rankText(currentGame.score, world.count)}</p>
       <button onClick={() => setPhase(Phase.StageSel)}>Back to Title</button>
       <button onClick={() => window.open(url, '_blank')}>タイーツ</button>
     </div>

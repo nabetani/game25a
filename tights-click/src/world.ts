@@ -19,6 +19,7 @@ export type CellType = {
 export type WorldType = {
   width: number,
   height: number,
+  count: number,
   cells: CellType[];
   nextKind: number;
   started: boolean;
@@ -74,6 +75,7 @@ export const newWorld = (ix: number, size: GameSize): WorldType => {
     nextKind: 0,
     started: false,
     combo: 0,
+    count: roomIx / 3,
   }
 }
 const getSize = (size: GameSize): { width: number; height: number; spaces: number } => {

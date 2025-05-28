@@ -13,6 +13,7 @@ const initialWorldState: WorldType = {
   cells: [],
   nextKind: 0,
   combo: 0,
+  count: 0,
 };
 
 const useWorldStore = create<WorldState>((set) => ({
