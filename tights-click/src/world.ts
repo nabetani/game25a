@@ -26,7 +26,7 @@ export type WorldType = {
 }
 
 export const newWorld = (ix: number, size: GameSize): WorldType => {
-  const { width, height } = getSize(size)
+  const { width, height, spaces } = getSize(size)
   const rng = newRNG(ix, width, height);
   const rooms = Array.from({ length: width * height }).map((_, ix) => ix)
   for (let i = 1; i < rooms.length; i++) {
@@ -36,27 +36,35 @@ export const newWorld = (ix: number, size: GameSize): WorldType => {
   const cells: CellType[] = []
 
   let dir = 0
-  rooms.forEach((pos, ix) => {
-    const kind = 2 - ix % 3
-    if (kind == 2) {
-      dir = rng.nextInt(0, 3)
-    }
-    const x = pos % width
-    const y = (pos - x) / width
-    const state = CellState.placed
-    cells[pos] = { dir, kind, state }
-    const dx = [0, 1, 0, -1][dir & 3]
-    const dy = [-1, 0, 1, 0][dir & 3]
-    for (let i = 1; ; i++) {
-      const cx = x + dx * i
-      const cy = y + dy * i
-      if (cx < 0 || width <= cx || cy < 0 || height <= cy) {
-        break
+  const vanished = width * height - (width * height) % 3
+  let roomIx = 0
+  rooms.forEach((pos) => {
+    const isSpace = 0 != (spaces & 2 ** pos)
+    const kind = 2 - roomIx % 3
+    if (isSpace) {
+      cells[pos] = { dir, kind, state: CellState.vanished }
+    } else {
+      if (kind == 2) {
+        dir = rng.nextInt(0, 3)
       }
-      const p = cx + cy * width
-      if (cells[p] != null) {
-        const rot = kind + 1
-        cells[p] = { ...cells[p], dir: (cells[p].dir - rot) & 3 }
+      const x = pos % width
+      const y = (pos - x) / width
+      const state = CellState.placed
+      roomIx++
+      cells[pos] = { dir, kind, state }
+      const dx = [0, 1, 0, -1][dir & 3]
+      const dy = [-1, 0, 1, 0][dir & 3]
+      for (let i = 1; ; i++) {
+        const cx = x + dx * i
+        const cy = y + dy * i
+        if (cx < 0 || width <= cx || cy < 0 || height <= cy) {
+          break
+        }
+        const p = cx + cy * width
+        if (cells[p] != null) {
+          const rot = kind + 1
+          cells[p] = { ...cells[p], dir: (cells[p].dir - rot) & 3 }
+        }
       }
     }
   })
@@ -68,18 +76,18 @@ export const newWorld = (ix: number, size: GameSize): WorldType => {
     combo: 0,
   }
 }
-const getSize = (size: GameSize): { width: number; height: number; } => {
+const getSize = (size: GameSize): { width: number; height: number; spaces: number } => {
   switch (size) {
     case GameSize.Tiny:
-      return { width: 2, height: 3 };
+      return { width: 2, height: 3, spaces: 0 };
     case GameSize.Small:
-      return { width: 3, height: 4 };
+      return { width: 3, height: 4, spaces: 0 };
     case GameSize.Medium:
-      return { width: 4, height: 6 };
+      return { width: 4, height: 5, spaces: 1 + (1 << 3) };
     case GameSize.Large:
-      return { width: 6, height: 9 };
+      return { width: 4, height: 6, spaces: 0 };
     case GameSize.Huge:
-      return { width: 8, height: 12 };
+      return { width: 5, height: 7, spaces: 1 + (1 << 4) };
   }
 }
 function newRNG(ix: number, width: number, height: number) {

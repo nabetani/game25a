@@ -495,7 +495,7 @@ const Game: React.FC<GameProps> = ({ stage }) => {
     switch (phase) {
       case Phase.Started:
         updateCurrentGame({
-          rest: world.width * world.height,
+          rest: world.cells.reduce((acc, x) => acc + (x.state == CellState.placed ? 1 : 0), 0),
           specials: {},
         })
         setPhase(Phase.Playing)
