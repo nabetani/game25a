@@ -345,6 +345,27 @@ function AnimateOpacityScore(): React.JSX.Element {
   </>
 }
 
+function AnimateFillScore(): React.JSX.Element {
+  const aniRef = useRef<SVGAnimateElement>(null);
+  useEffect(() => {
+    if (aniRef.current != null) {
+      aniRef.current.beginElement(); // アニメーション開始
+    }
+  }, []);
+  const n = 36
+  const values = Array.from({ length: n }).map(
+    (_, ix) => `oklch(0.9 0.4 ${ix * 10})`
+  ).join(";")
+  return <>
+    <animate
+      ref={aniRef}
+      attributeName='fill'
+      values={values}
+      dur="0.3s"
+      repeatCount="indefinite" />
+  </>
+}
+
 function ScoreDiff(): React.JSX.Element {
   const [text, setText] = useState<string | null>(null)
   useEffect(() => {
@@ -359,7 +380,8 @@ function ScoreDiff(): React.JSX.Element {
   return <g key={text} opacity={0}>
     <AnimateScaleScore />
     <AnimateOpacityScore />
-    <text x={0} y={0}>{text}</text>
+    <AnimateFillScore />
+    <text x={0} y={0} >{text}</text>
   </g>
 
 }
@@ -418,6 +440,7 @@ function WorldSVG(): React.JSX.Element {
         fontSize={svgVW / 20}
         transform={`translate(${svgVW / 2} ${svgVH / 2})`}
         style={{ pointerEvents: "none" }}
+        strokeWidth={svgVW / 400} stroke="black"
       >
         <ScoreDiff />
       </g>
