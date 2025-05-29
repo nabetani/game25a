@@ -7,7 +7,6 @@
 
 * {
   margin: 0;
-  font-family: "Hiragino Maru Gothic Pro", "Yu Gothic", sans-serif;
 }
 
 html {
@@ -15,6 +14,12 @@ html {
   align-items: center;
   justify-content: center;
   height: 100%;
+}
+
+#root {
+  width: var(--w);
+  height: var(--h);
+  border: solid green 2px;
 }
 
 .sound-selected {
@@ -33,6 +38,10 @@ html {
   margin: 10% auto auto 10%;
   border: solid #eee 1px;
   background-color: rgba(255, 255, 255, 0.9);
+}
+
+#stage-sel {
+  font-family: "Hiragino Maru Gothic Pro", "Yu Gothic", sans-serif;
 }
 
 #game-state-panel {

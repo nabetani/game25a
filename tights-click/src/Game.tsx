@@ -396,8 +396,8 @@ function WorldSVG(): React.JSX.Element {
   const svgVH = height * cellStep + pad * 2;
   const viewBox = [0, 0, svgVW, svgVH].join(" ");
   const vw = 90;
-  const styleW = `${vw}vw`;
-  const styleH = `${vw / svgVW * svgVH}vw`;
+  const styleW = "var(--w)";
+  const styleH = `calc(var(--w) * ${svgVH / svgVW}`
   const centerXY = (x: number, y: number): [number, number] => {
     return [pad + (x + 0.5) * cellStep, pad + (y + 0.5) * cellStep]
   }

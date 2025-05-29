@@ -24,7 +24,7 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
     setWorld(newWorld(ix, size))
   }
   return (
-    <div>
+    <div id="stage-sel">
       <h1>Stage Selection</h1>
       <div>
         <button
