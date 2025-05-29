@@ -5,9 +5,12 @@
   --bo: calc(var(--w)/200);
 }
 
+* {
+  margin: 0;
+  font-family: "Hiragino Maru Gothic Pro", "Yu Gothic", sans-serif;
+}
+
 html {
-  color-scheme: light dark;
-  font-family: system-ui;
   display: flex;
   align-items: center;
   justify-content: center;
