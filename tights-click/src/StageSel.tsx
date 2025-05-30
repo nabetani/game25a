@@ -25,8 +25,7 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
   }
   return (
     <div id="stage-sel">
-      <h1>Stage Selection</h1>
-      <div>
+      <div id="sound-ui">
         <button
           className={soundOn ? "sound-selected" : "sound-not-selected"}
           onClick={() => setSoundOn(true)}>Sound ON</button>
@@ -34,15 +33,16 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
           className={soundOn ? "sound-not-selected" : "sound-selected"}
           onClick={() => setSoundOn(false)}>Sound OFF</button>
       </div>
-      <div>
+      <h1>タ·イ·ツ タッチ</h1>
+      <div className="size-selector" >
         {
           gameSizeNumbers().map(e => {
             if (e == sizeID) {
-              return <span key={e} >[{GameSize[e]}]</span>
+              return <div key={e} >{GameSize[e]}</div>
             } else {
               return <button key={e}
                 onClick={() => setSizeID(e)}
-              >[{GameSize[e]}]</button>
+              >{GameSize[e]}</button>
             }
           }
           )}
@@ -52,21 +52,24 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
           const sid = makeStageID(ix, sizeID)
           const stage = stageStates.m[sid]
           const count = stage == null ? 0 : stage.trialCount ?? 0
-          if (0 == count) {
+          if (count <= 0) {
             return <button
+              className='stage-num'
               key={ix}
-              onClick={() => startGame(ix, sizeID)}>play {ix}
+              onClick={() => startGame(ix, sizeID)}>
+              <span>Stage #</span>{ix}
             </button>
           }
-          return <div key={ix} style={{ border: "solid red 1px" }}>
+          return <div className="stage-info" key={ix} style={{ border: "solid red 1px" }}>
             <div style={{ display: "inline-block" }}>
               {stage.best && <span>best: {stage.best}</span>}
-              {stage.full && <span>best: {stage.full}</span>}
-              <span>tried {stage.trialCount}</span>
+              <span>tried: {stage.trialCount}</span>
             </div>
             <button
+              className='stage-num'
               key={ix}
-              onClick={() => startGame(ix, sizeID)}>play {ix}
+              onClick={() => startGame(ix, sizeID)}>
+              <span>Stage #</span>{ix}
             </button>
           </div>
         })}

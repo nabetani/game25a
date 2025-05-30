@@ -16,19 +16,95 @@ html {
   height: 100%;
 }
 
+h1 {
+  font-family: "Cherry Bomb One", system-ui;
+  font-size: calc(var(--u)*10);
+}
+
+
 #root {
   width: var(--w);
   height: var(--h);
   border: solid green 2px;
 }
 
-.sound-selected {
-  border: solid black 3px;
+.size-selector {
+  display: flex;
+  align-items: flex-end;
+
+  /* 下揃え */
+  * {
+    display: inline-block;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    font-family: "Jockey One", sans-serif;
+
+    border-top-left-radius: calc(var(--u)*4);
+    border-top-right-radius: calc(var(--u)*4);
+    height: calc(var(--u) * 10);
+    min-height: calc(var(--u) * 10);
+  }
+
+  button {
+    font-size: calc(var(--u)*6);
+    width: calc(var(--w) / 5.2);
+    padding: 0;
+    margin: 0;
+  }
+
+  div {
+    font-size: calc(var(--u)*6);
+    width: calc(var(--w) / 5.2 * 1.2);
+    background-color: black;
+    color: white;
+  }
 }
 
-.world-svg {
-  border: dotted red 3px;
+
+
+div,
+button {
+  font-size: calc(var(--u)*6);
+  margin: 0;
+  padding: 0;
 }
+
+button {
+  border: solid #888 calc(var(--u)*0.5);
+}
+
+button.stage-num {
+  border: solid #888 calc(var(--u)*0.5);
+  width: calc(var(--w)/4.01);
+  font-family: "Jockey One", sans-serif;
+
+  span {
+    font-size: calc(var(--u)*4.4);
+  }
+
+}
+
+
+#sound-ui {
+  text-align: right;
+
+  * {
+    border-radius: calc(var(--u) * 3);
+  }
+}
+
+.sound-selected {
+  border: solid black calc(var(--u)*1);
+  font-size: calc(var(--u)*6);
+}
+
+.sound-not-selected {
+  border: solid #888 calc(var(--u)*0.1);
+  font-size: calc(var(--u)*5);
+}
+
+/* .world-svg {} */
 
 #completed {
   position: absolute;
@@ -57,7 +133,6 @@ html {
   * {
     margin: 0;
     padding: 0;
-    border: solid red 1px;
   }
 
 }
