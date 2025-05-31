@@ -3,6 +3,8 @@
   --h: min(100lvh, calc(100lvw*2.2));
   --u: calc(var(--w)/100);
   --bo: calc(var(--w)/200);
+
+  --stage-area-col: #aaa;
 }
 
 * {
@@ -39,7 +41,7 @@ h1 {
     margin: 0;
     padding: 0;
     font-family: "Jockey One", sans-serif;
-
+    border-color: black;
     border-top-left-radius: calc(var(--u)*4);
     border-top-right-radius: calc(var(--u)*4);
     height: calc(var(--u) * 10);
@@ -51,6 +53,7 @@ h1 {
     width: calc(var(--w) / 5.2);
     padding: 0;
     margin: 0;
+    border-color: black;
   }
 
   div {
@@ -71,7 +74,7 @@ button {
 }
 
 button {
-  border: solid #888 calc(var(--u)*0.5);
+  border: solid black calc(var(--u)*0.5);
 }
 
 button.stage-num {
@@ -98,12 +101,16 @@ button.stage-num {
 
 .sound-selected {
   border: solid black calc(var(--u)*1);
+  margin: calc(var(--u)*1);
+  padding: calc(var(--u)*1) calc(var(--u)*3);
   font-size: calc(var(--u)*6);
 }
 
 .sound-not-selected {
   border: solid #888 calc(var(--u)*0.1);
   font-size: calc(var(--u)*5);
+  margin: calc(var(--u)*1);
+  padding: calc(var(--u)*1) calc(var(--u)*3);
 }
 
 /* .world-svg {} */
@@ -139,9 +146,20 @@ button.stage-num {
 
 }
 
+#stage-list {
+  height: calc(var(--h) * 0.5);
+  max-height: calc(var(--h) * 0.5);
+  overflow: scroll;
+
+  button {
+    border: solid black calc(var(--u)*0.5);
+  }
+}
+
 .stage-info {
-  border: solid #888 calc(var(--u) * 1);
+  border: solid black calc(var(--u) * 1);
   border-radius: calc(var(--u) * 3);
+  background-color: var(--stage-st-col);
   padding: calc(var(--u) * 1) calc(var(--u) * 3);
   margin: calc(var(--u) * 1) calc(var(--u) * 1);
   display: grid;

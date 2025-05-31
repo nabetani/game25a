@@ -23,6 +23,7 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
     setPhase(Phase.Started);
     setWorld(newWorld(ix, size))
   }
+  const gameSizes = gameSizeNumbers()
   return (
     <div id="stage-sel">
       <div id="sound-ui">
@@ -36,31 +37,42 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
       <h1>タ·イ·ツ タッチ</h1>
       <div className="size-selector" >
         {
-          gameSizeNumbers().map(e => {
+          gameSizes.map((e, ix) => {
             if (e == sizeID) {
               return <div key={e} >{GameSize[e]}</div>
             } else {
               return <button key={e}
+                style={{
+                  backgroundColor: `oklch( 0.8 0.3 ${e * 360 / gameSizes.length})`
+                }}
                 onClick={() => setSizeID(e)}
               >{GameSize[e]}</button>
             }
           }
           )}
       </div>
-      <div>
-        {Array.from({ length: 20 }).map((_, ix) => {
+      <div id="stage-list">
+        {Array.from({ length: 3000 }).map((_, ix) => {
           const sid = makeStageID(ix, sizeID)
           const stage = stageStates.m[sid]
           const count = stage == null ? 0 : stage.trialCount ?? 0
+          const hue = ix * 5 + 150
           if (count <= 0) {
             return <button
               className='stage-num'
+              style={{
+                backgroundColor: `oklch(0.8 0.2 ${hue}`
+              }}
               key={ix}
               onClick={() => startGame(ix, sizeID)}>
               <span>Stage #</span>{ix}
             </button>
           }
-          return <div className="stage-info" key={ix}>
+          return <div className="stage-info" key={ix}
+            style={{
+              backgroundColor: `oklch(0.95 0.2 ${hue}`
+            }}
+          >
             <div>
               <span>best: {stage.best ?? "??"}</span>
               <span>tried: {stage.trialCount}</span>
@@ -68,6 +80,9 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
             <button
               className='stage-num'
               key={ix}
+              style={{
+                backgroundColor: `oklch(0.75 0.2 ${hue}`
+              }}
               onClick={() => startGame(ix, sizeID)}>
               <span>Stage #</span>{ix}
             </button>
