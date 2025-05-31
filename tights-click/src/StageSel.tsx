@@ -1,5 +1,5 @@
 import React from 'react';
-import { GameSize, gameSizeNumbers, makeStageID, Phase, PlayingStageProps, StageIDType } from './constants';
+import { GameSize, gameSizeNumbers, makeStageID, Phase, PlayingStageProps, StageIDType, title } from './constants';
 import { useStageStore } from './stage_store';
 import { useCurrentGameStore } from './current_game_store';
 import { useStageSelStore } from './stage_sel_store';
@@ -114,7 +114,7 @@ const StageSel: React.FC<PlayingStageProps> = (
   return (
     <div id="stage-sel">
       <SoundUI />
-      <h1>タ·イ·ツ タッチ</h1>
+      <h1>{title}</h1>
       <SizeSelector sizeID={sizeID} setSizeID={setSizeID} />
       <StageList sizeID={sizeID} setStage={setStage} />
     </div>

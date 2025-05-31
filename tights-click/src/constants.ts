@@ -7,6 +7,8 @@ export enum GameSize { // Object.values を使うために 非const
   Huge = 5,
 }
 
+export const title = "くるくるタイツ"
+
 export const gameSizeNumbers = (): GameSize[] => {
   return Object.values(GameSize).filter(
     (v) => typeof v === 'number'
