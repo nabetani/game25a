@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { GameSize, Phase, StageIDType, splitStageID } from './constants';
-import { Specials, useCurrentGameStore } from './current_game_store';
+import { CurrentGame, Specials, useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
 import { CellState, CellType, progressWorld, WorldType } from './world';
 import { usePhaseStore } from './phaseStore';
@@ -482,6 +482,59 @@ function CompletedUI(): React.JSX.Element {
   );
 }
 
+const comboAnimationFrame = (combo: number): PropertyIndexedKeyframes => {
+  const color = Array.from({ length: 36 }).map((_, ix) => `oklch( 0.4 0.4 ${ix * 10}`)
+  const s = 0.05 * Math.max(0, combo - 1)
+  const x = Math.max(0, combo - 3) * 0.3
+  const r = Math.max(0, combo - 5) * 0.005
+  const N = 50;
+  const transform = Array.from({ length: N }).map((_, ix) => {
+    const th = ix * (Math.PI * 2 / N);
+    const scale = `scale( ${2 ** (s * Math.sin(th))} )`
+    const translate = `translate(${x * Math.sin(th * 4)}%,${x * Math.cos(th * 3)}%)`
+    const rotate = `rotate(${r * Math.sin(th * 3)}turn)`
+    return [translate, rotate, scale].join(" ")
+  })
+
+  return { color, transform }
+}
+
+function GameStatePanel({
+  title, currentGame
+}: {
+  title: string,
+  currentGame: CurrentGame
+}): React.JSX.Element {
+  const comboRef = useRef<HTMLParagraphElement>(null)
+  const [animation, setAnimation] = useState<Animation | null>(null)
+  useEffect(() => {
+    if (comboRef.current != null) {
+      const combo = currentGame.combo ?? 0
+      if (0 < combo) {
+        setAnimation(
+          comboRef.current.animate(
+            comboAnimationFrame(combo),
+            { duration: 300, iterations: Infinity, }
+          ))
+      } else {
+        if (animation != null) {
+          animation.cancel()
+        }
+      }
+    }
+    return () => { animation != null && animation.cancel() }
+  }, [comboRef.current, currentGame.combo])
+  return <div id="game-state-panel">
+    <p id="title">{title}</p>
+    <p id="score-text">
+      <span id="score-num">{currentGame.score}</span>
+      <span id="score-unit">pts.</span>
+    </p>
+    <p id="combo" ref={comboRef}>{currentGame.combo} Combo</p>
+  </div>
+
+}
+
 interface GameProps {
   stage: StageIDType | null;
 }
@@ -526,14 +579,7 @@ const Game: React.FC<GameProps> = ({ stage }) => {
 
   return (
     <div>
-      <div id="game-state-panel">
-        <p id="title">{title}</p>
-        <p id="score-text">
-          <span id="score-num">{currentGame.score}</span>
-          <span id="score-unit">pts.</span>
-        </p>
-        <p id="combo">{currentGame.combo} Combo</p>
-      </div>
+      <GameStatePanel title={title} currentGame={currentGame} />
       <WorldSVG />
       {phase == Phase.Completed && <CompletedUI />}
     </div>
