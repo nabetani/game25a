@@ -455,12 +455,12 @@ const rankText = (score: number, count: number): string => {
   const s0 = 200
   const sL = count * 100 + 100
   const hi = (s0 + sL) * count / 2
-  if (8 < count && hi <= score) { return "incredible!" }
+  if (8 < count && hi <= score) { return "Incredible!" }
   const r = 100 * (score - low) / (hi - low)
-  if (6 < count && 50 <= r) { return "awesome!" }
-  if (4 < count && 15 <= r) { return "well done!" }
-  if (5 <= r) { return "good job!" }
-  return "you made it!"
+  if (6 < count && 50 <= r) { return "Awesome!" }
+  if (4 < count && 15 <= r) { return "Well Done!" }
+  if (5 <= r) { return "Good Job!" }
+  return "You Made It!"
 }
 
 function CompletedUI(): React.JSX.Element {
@@ -471,13 +471,16 @@ function CompletedUI(): React.JSX.Element {
   const url = `https://taittsuu.com/share?text=${encodeURIComponent(text)}`;
   return (
     <div id="completed">
-      <p>Completed!</p>
-      <p>Score: {currentGame.score}
-        {!!currentGame.newBest && <>new record!</>}
-      </p>
-      <p>{rankText(currentGame.score, world.count)}</p>
-      <button onClick={() => setPhase(Phase.StageSel)}>Back to Title</button>
-      <button onClick={() => window.open(url, '_blank')}>タイーツ</button>
+      {currentGame.newBest == null ? <>
+        <p id="completed-head">Completed</p>
+      </> : <>
+        <p id="new-record">New Record!</p>
+      </>}
+      <p id="rank-text">{rankText(currentGame.score, world.count)}</p>
+      <div id="completed-buttons">
+        <button className="back-to-title" onClick={() => setPhase(Phase.StageSel)}>Back to Title</button>
+        <button className="taiitsu" onClick={() => window.open(url, '_blank')}>タイーツ</button>
+      </div>
     </div>
   );
 }

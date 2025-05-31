@@ -114,15 +114,81 @@ button.stage-num {
 }
 
 /* .world-svg {} */
+@keyframes hueLoop {
+  0% {
+    color: oklch(0.8 0.2 0deg);
+  }
+
+  25% {
+    color: oklch(0.8 0.2 90deg);
+  }
+
+  50% {
+    color: oklch(0.8 0.2 180deg);
+  }
+
+  75% {
+    color: oklch(0.8 0.2 270deg);
+  }
+
+  100% {
+    color: oklch(0.8 0.2 360deg);
+  }
+}
 
 #completed {
   position: absolute;
-  top: 0;
+  top: calc(var(--h) * 0.3);
   left: 0;
   width: 80%;
   margin: 10% auto auto 10%;
-  border: solid #eee 1px;
+  border: solid #eee calc(var(--u) * 1);
   background-color: rgba(255, 255, 255, 0.9);
+
+  p {
+    width: 100%;
+    text-align: center;
+    border: dotted red 2px;
+  }
+
+  #completed-head {
+    font-family: "Jockey One", sans-serif;
+    font-size: calc(var(--u) * 8);
+  }
+
+
+  #new-record {
+    font-family: "Jockey One", sans-serif;
+    font-size: calc(var(--u) * 10);
+    animation: hueLoop 0.5s linear infinite;
+  }
+
+  #rank-text {
+    font-family: 'Cherry Bomb One';
+    font-size: calc(var(--u) * 10);
+  }
+
+  #completed-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    button {
+      margin: calc(var(--u) * 2) calc(var(--u) * 2);
+      border-radius: calc(var(--u) * 2);
+    }
+
+    button.back-to-title {
+      font-family: "Jockey One", sans-serif;
+      font-size: calc(var(--u) * 7);
+    }
+
+    button.taiitsu {
+      font-family: 'Cherry Bomb One';
+      font-size: calc(var(--u) * 9);
+
+    }
+
+  }
 }
 
 #stage-sel {
