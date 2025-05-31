@@ -16,11 +16,37 @@ const stageCount = ((): number => {
   return Math.ceil(dayNum() - dayNum("2025-05-23T13:00:00+0900"))
 })()
 
+function SizeSelector(
+  { sizeID, setSizeID }: {
+    sizeID: number,
+    setSizeID: (_: number) => void,
+  }
+): React.JSX.Element {
+  const gameSizes = gameSizeNumbers()
+
+  return <div className="size-selector" >
+    {
+      gameSizes.map((e, ix) => {
+        if (e == sizeID) {
+          return <div key={e} >{GameSize[e]}</div>
+        } else {
+          return <button key={e}
+            style={{
+              backgroundColor: `oklch( 0.8 0.3 ${e * 360 / gameSizes.length})`
+            }}
+            onClick={() => setSizeID(e)}
+          >{GameSize[e]}</button>
+        }
+      }
+      )}
+  </div>
+
+}
 const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
-  const { phase, setPhase } = usePhaseStore();
+  const { setPhase } = usePhaseStore();
   const { stageStates, updateStageUnit } = useStageStore()
   const { updateCurrentGame } = useCurrentGameStore();
-  const { sizeID, setSizeID, soundOn, setSoundOn } = useStageSelStore();
+  const { sizeID, setSizeID } = useStageSelStore();
   const { setWorld } = useWorldStore()
 
   function startGame(ix: number, size: GameSize) {
@@ -32,34 +58,11 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
     setPhase(Phase.Started);
     setWorld(newWorld(ix, size))
   }
-  const gameSizes = gameSizeNumbers()
   return (
     <div id="stage-sel">
-      <div id="sound-ui">
-        <button
-          className={soundOn ? "sound-selected" : "sound-not-selected"}
-          onClick={() => setSoundOn(true)}>Sound ON</button>
-        <button
-          className={soundOn ? "sound-not-selected" : "sound-selected"}
-          onClick={() => setSoundOn(false)}>Sound OFF</button>
-      </div>
+      <SoundUI />
       <h1>タ·イ·ツ タッチ</h1>
-      <div className="size-selector" >
-        {
-          gameSizes.map((e, ix) => {
-            if (e == sizeID) {
-              return <div key={e} >{GameSize[e]}</div>
-            } else {
-              return <button key={e}
-                style={{
-                  backgroundColor: `oklch( 0.8 0.3 ${e * 360 / gameSizes.length})`
-                }}
-                onClick={() => setSizeID(e)}
-              >{GameSize[e]}</button>
-            }
-          }
-          )}
-      </div>
+      <SizeSelector sizeID={sizeID} setSizeID={setSizeID} />
       <div id="stage-list">
         {Array.from({ length: stageCount }).map((_, ix) => {
           const stageNum = stageCount - ix
@@ -102,5 +105,18 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
     </div>
   );
 };
+
+function SoundUI() {
+  const { soundOn, setSoundOn } = useStageSelStore();
+  return <div id="sound-ui">
+    <button
+      className={soundOn ? "sound-selected" : "sound-not-selected"}
+      onClick={() => setSoundOn(true)}>Sound ON</button>
+    <button
+      className={soundOn ? "sound-not-selected" : "sound-selected"}
+      onClick={() => setSoundOn(false)}>Sound OFF</button>
+  </div>;
+}
+
 
 export default StageSel;
