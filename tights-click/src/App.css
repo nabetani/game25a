@@ -76,11 +76,13 @@ button {
 
 button.stage-num {
   border: solid #888 calc(var(--u)*0.5);
-  width: calc(var(--w)/4.01);
+  width: calc(var(--w) / 4.01 - var(--u) * 2);
   font-family: "Jockey One", sans-serif;
+  margin: calc(var(--u) * 1);
+  border-radius: calc(var(--u) * 2);
 
   span {
-    font-size: calc(var(--u)*4.4);
+    font-size: calc(var(--u)*3.6);
   }
 
 }
@@ -135,4 +137,20 @@ button.stage-num {
     padding: 0;
   }
 
+}
+
+.stage-info {
+  border: solid #888 calc(var(--u) * 1);
+  border-radius: calc(var(--u) * 3);
+  padding: calc(var(--u) * 1) calc(var(--u) * 3);
+  margin: calc(var(--u) * 1) calc(var(--u) * 1);
+  display: grid;
+  grid-template-columns: 30fr 1fr;
+  font-family: "Jockey One", sans-serif;
+
+  div {
+    font-size: calc(var(--u) * 8);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
 }

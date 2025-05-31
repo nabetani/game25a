@@ -60,9 +60,9 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
               <span>Stage #</span>{ix}
             </button>
           }
-          return <div className="stage-info" key={ix} style={{ border: "solid red 1px" }}>
-            <div style={{ display: "inline-block" }}>
-              {stage.best && <span>best: {stage.best}</span>}
+          return <div className="stage-info" key={ix}>
+            <div>
+              <span>best: {stage.best ?? "??"}</span>
               <span>tried: {stage.trialCount}</span>
             </div>
             <button
