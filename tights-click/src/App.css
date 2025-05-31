@@ -30,6 +30,12 @@ h1 {
   border: solid green 2px;
 }
 
+#app {
+  width: 100%;
+  height: 100%;
+  display: grid;
+}
+
 .size-selector {
   display: flex;
   align-items: flex-end;
@@ -159,13 +165,16 @@ button.stage-num {
   }
 }
 
-#completed {
+#completed-wrapper {
   position: absolute;
   top: calc(var(--h) * 0.3);
+
+}
+
+#completed {
   border-radius: calc(var(--u) * 4);
   border: solid black calc(var(--u) * 1);
-  left: 0;
-  width: 80%;
+  width: calc(var(--w) * 0.8);
   margin: 10% auto auto 10%;
   animation: backgroundHueLoop 2s linear infinite;
 
@@ -265,4 +274,15 @@ button.stage-num {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
+}
+
+#game-body {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+#bg-tights {
+  grid-row: 1;
+  grid-column: 1;
+  z-index: -1;
 }

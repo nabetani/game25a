@@ -7,6 +7,7 @@ import { usePhaseStore } from './phaseStore';
 import mitt from 'mitt';
 import { useStageSelStore } from './stage_sel_store';
 import { useStageStore } from './stage_store';
+import { BGTights } from './BGTights';
 
 type MittEvents = {
   addScore: string | null;
@@ -470,16 +471,18 @@ function CompletedUI(): React.JSX.Element {
   const text = `I scored ${currentGame.score} in Tights Click!`;
   const url = `https://taittsuu.com/share?text=${encodeURIComponent(text)}`;
   return (
-    <div id="completed">
-      {currentGame.newBest == true ? <>
-        <p id="new-record">New Record!</p>
-      </> : <>
-        <p id="completed-head">Completed</p>
-      </>}
-      <p id="rank-text">{rankText(currentGame.score, world.count)}</p>
-      <div id="completed-buttons">
-        <button className="back-to-title" onClick={() => setPhase(Phase.StageSel)}>Back to Title</button>
-        <button className="taiitsu" onClick={() => window.open(url, '_blank')}>タイーツ</button>
+    <div id="completed-wrapper">
+      <div id="completed">
+        {currentGame.newBest == true ? <>
+          <p id="new-record">New Record!</p>
+        </> : <>
+          <p id="completed-head">Completed</p>
+        </>}
+        <p id="rank-text">{rankText(currentGame.score, world.count)}</p>
+        <div id="completed-buttons">
+          <button className="back-to-title" onClick={() => setPhase(Phase.StageSel)}>Back to Title</button>
+          <button className="taiitsu" onClick={() => window.open(url, '_blank')}>タイーツ</button>
+        </div>
       </div>
     </div>
   );
@@ -580,13 +583,14 @@ const Game: React.FC<GameProps> = ({ stage }) => {
 
   const title = `${GameSize[size]} #${course}`
 
-  return (
-    <div>
+  return <>
+    <BGTights />
+    <div id="game-body">
       <GameStatePanel title={title} currentGame={currentGame} />
       <WorldSVG />
       {phase == Phase.Completed && <CompletedUI />}
     </div>
-  );
+  </>;
 };
 
 export default Game;
