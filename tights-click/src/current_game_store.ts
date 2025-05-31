@@ -10,18 +10,29 @@ export type CurrentGame = {
   score: number;
   combo: number;
   specials: Specials;
-  rest?: number;
+  newBest: boolean;
 };
 
 type CurrentGameStore = {
   currentGame: CurrentGame;
   updateCurrentGame: (newSum: Partial<CurrentGame>) => void;
+  clearCurrnetGame: () => void;
 };
 
 export const useCurrentGameStore = create<CurrentGameStore>((set) => ({
-  currentGame: { score: 0, combo: 0, specials: {} },
+  currentGame: { score: 0, combo: 0, newBest: false, specials: {} },
   updateCurrentGame: (newSum: Partial<CurrentGame>) =>
     set((state) => ({
       currentGame: { ...state.currentGame, ...newSum },
     })),
+  clearCurrnetGame: () => {
+    set((_state) => ({
+      currentGame: {
+        score: 0,
+        combo: 0,
+        specials: {},
+        newBest: false,
+      },
+    }))
+  }
 }));

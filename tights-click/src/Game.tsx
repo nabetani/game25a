@@ -5,6 +5,8 @@ import useWorldStore from './worldStore';
 import { CellState, CellType, progressWorld, WorldType } from './world';
 import { usePhaseStore } from './phaseStore';
 import mitt from 'mitt';
+import { useStageSelStore } from './stage_sel_store';
+import { useStageStore } from './stage_store';
 
 type MittEvents = {
   addScore: string | null;
@@ -38,7 +40,6 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
       score: currentGame.score + p.score,
       combo: p.world.combo,
       specials: p.specials,
-      rest: (currentGame.rest || 0) - 1,
     })
     setWorld(p.world);
     if (0 < (p.score ?? 0)) {
@@ -471,7 +472,9 @@ function CompletedUI(): React.JSX.Element {
   return (
     <div id="completed">
       <p>Completed!</p>
-      <p>Score: {currentGame.score}</p>
+      <p>Score: {currentGame.score}
+        {!!currentGame.newBest && <>new record!</>}
+      </p>
       <p>{rankText(currentGame.score, world.count)}</p>
       <button onClick={() => setPhase(Phase.StageSel)}>Back to Title</button>
       <button onClick={() => window.open(url, '_blank')}>タイーツ</button>
@@ -483,29 +486,39 @@ interface GameProps {
   stage: StageIDType | null;
 }
 
+const countRest = (world: WorldType): number => (
+  world.cells.reduce((acc, x) => acc + (x.state == CellState.placed ? 1 : 0), 0)
+)
 const Game: React.FC<GameProps> = ({ stage }) => {
   const { currentGame, updateCurrentGame } = useCurrentGameStore();
   const { world } = useWorldStore();
   const { phase, setPhase } = usePhaseStore();
+  const { stageStates, updateStageUnit } = useStageStore();
   if (!stage) {
     return <div>No stage selected.</div>;
   }
+  const rest = countRest(world)
   React.useEffect(() => {
     switch (phase) {
       case Phase.Started:
         updateCurrentGame({
-          rest: world.cells.reduce((acc, x) => acc + (x.state == CellState.placed ? 1 : 0), 0),
           specials: {},
         })
         setPhase(Phase.Playing)
         break
       case Phase.Playing:
-        if (currentGame.rest === 0) {
+        if (rest === 0) {
+          const old = stageStates.m[stage]
+          const newBest = (old.best ?? 0) < currentGame.score
+          if (newBest) {
+            updateStageUnit(stage, { best: currentGame.score })
+          }
+          updateCurrentGame({ newBest })
           setPhase(Phase.Completed)
         }
         break
     }
-  }, [phase, currentGame.rest])
+  }, [phase, rest])
 
   const { course, size } = splitStageID(stage);
 
