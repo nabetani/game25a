@@ -471,10 +471,10 @@ function CompletedUI(): React.JSX.Element {
   const url = `https://taittsuu.com/share?text=${encodeURIComponent(text)}`;
   return (
     <div id="completed">
-      {currentGame.newBest == null ? <>
-        <p id="completed-head">Completed</p>
-      </> : <>
+      {currentGame.newBest == true ? <>
         <p id="new-record">New Record!</p>
+      </> : <>
+        <p id="completed-head">Completed</p>
       </>}
       <p id="rank-text">{rankText(currentGame.score, world.count)}</p>
       <div id="completed-buttons">

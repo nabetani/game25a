@@ -114,41 +114,64 @@ button.stage-num {
 }
 
 /* .world-svg {} */
-@keyframes hueLoop {
+
+@keyframes colorHueLoop {
   0% {
-    color: oklch(0.8 0.2 0deg);
+    color: oklch(0.6 0.2 0deg);
   }
 
   25% {
-    color: oklch(0.8 0.2 90deg);
+    color: oklch(0.6 0.2 90deg);
   }
 
   50% {
-    color: oklch(0.8 0.2 180deg);
+    color: oklch(0.6 0.2 180deg);
   }
 
   75% {
-    color: oklch(0.8 0.2 270deg);
+    color: oklch(0.6 0.2 270deg);
   }
 
   100% {
-    color: oklch(0.8 0.2 360deg);
+    color: oklch(0.6 0.2 360deg);
+  }
+}
+
+@keyframes backgroundHueLoop {
+  0% {
+    background-color: oklch(0.95 0.4 0deg / 0.3);
+  }
+
+  25% {
+    background-color: oklch(0.95 0.4 90deg / 0.3);
+  }
+
+  50% {
+    background-color: oklch(0.95 0.4 180deg / 0.3);
+  }
+
+  75% {
+    background-color: oklch(0.95 0.4 270deg / 0.3);
+  }
+
+  100% {
+    background-color: oklch(0.95 0.4 360deg / 0.3);
   }
 }
 
 #completed {
   position: absolute;
   top: calc(var(--h) * 0.3);
+  border-radius: calc(var(--u) * 4);
+  border: solid black calc(var(--u) * 1);
   left: 0;
   width: 80%;
   margin: 10% auto auto 10%;
-  border: solid #eee calc(var(--u) * 1);
-  background-color: rgba(255, 255, 255, 0.9);
+  animation: backgroundHueLoop 2s linear infinite;
 
   p {
     width: 100%;
     text-align: center;
-    border: dotted red 2px;
   }
 
   #completed-head {
@@ -160,7 +183,7 @@ button.stage-num {
   #new-record {
     font-family: "Jockey One", sans-serif;
     font-size: calc(var(--u) * 10);
-    animation: hueLoop 0.5s linear infinite;
+    animation: colorHueLoop 0.5s linear infinite;
   }
 
   #rank-text {
