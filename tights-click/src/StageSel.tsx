@@ -7,6 +7,15 @@ import useWorldStore from './worldStore';
 import { newWorld } from './world';
 import { usePhaseStore } from './phaseStore';
 
+const dayNum = (s?: string): number => {
+  const d = s == null ? new Date() : new Date(s)
+  return d.getTime() / (24 * 60 * 60 * 1000)
+}
+
+const stageCount = ((): number => {
+  return Math.ceil(dayNum() - dayNum("2025-05-23T13:00:00+0900"))
+})()
+
 const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
   const { phase, setPhase } = usePhaseStore();
   const { stageStates, updateStageUnit } = useStageStore()
@@ -52,23 +61,24 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
           )}
       </div>
       <div id="stage-list">
-        {Array.from({ length: 3000 }).map((_, ix) => {
-          const sid = makeStageID(ix, sizeID)
+        {Array.from({ length: stageCount }).map((_, ix) => {
+          const stageNum = stageCount - ix
+          const sid = makeStageID(stageNum, sizeID)
           const stage = stageStates.m[sid]
           const count = stage == null ? 0 : stage.trialCount ?? 0
-          const hue = ix * 5 + 150
+          const hue = stageNum * 5 + 150
           if (count <= 0) {
             return <button
               className='stage-num'
               style={{
                 backgroundColor: `oklch(0.8 0.2 ${hue}`
               }}
-              key={ix}
-              onClick={() => startGame(ix, sizeID)}>
-              <span>Stage #</span>{ix}
+              key={stageNum}
+              onClick={() => startGame(stageNum, sizeID)}>
+              <span>Stage #</span>{stageNum}
             </button>
           }
-          return <div className="stage-info" key={ix}
+          return <div className="stage-info" key={stageNum}
             style={{
               backgroundColor: `oklch(0.95 0.2 ${hue}`
             }}
@@ -79,12 +89,12 @@ const StageSel: React.FC<PlayingStageProps> = ({ stage, setStage }) => {
             </div>
             <button
               className='stage-num'
-              key={ix}
+              key={stageNum}
               style={{
                 backgroundColor: `oklch(0.75 0.2 ${hue}`
               }}
-              onClick={() => startGame(ix, sizeID)}>
-              <span>Stage #</span>{ix}
+              onClick={() => startGame(stageNum, sizeID)}>
+              <span>Stage #</span>{stageNum}
             </button>
           </div>
         })}

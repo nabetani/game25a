@@ -150,6 +150,7 @@ button.stage-num {
   height: calc(var(--h) * 0.5);
   max-height: calc(var(--h) * 0.5);
   overflow: scroll;
+  background-color: #eee;
 
   button {
     border: solid black calc(var(--u)*0.5);
