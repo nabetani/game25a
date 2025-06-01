@@ -108,18 +108,40 @@ function StageList({
 
 }
 
-function Bottom({ setShowStory }: { setShowStory: (_: boolean) => void }): React.JSX.Element {
+const Mode = {
+  StageSel: 1,
+  Story: 2,
+  Etc: 3
+} as const
+type ModeType = typeof Mode[keyof (typeof Mode)]
+
+function Bottom({ setMode }: { setMode: (_: ModeType) => void }): React.JSX.Element {
   return <div id="stage-sel-bottom">
-    <button onClick={() => setShowStory(true)}>ストーリー</button>
+    <button onClick={() => setMode(Mode.Story)}>ストーリー</button>
+    <button onClick={() => setMode(Mode.Etc)}>いろいろ</button>
   </div>
 }
 
-function Story({ setShowStory }: { setShowStory: (_: boolean) => void }): React.JSX.Element {
+function Story({ close }: { close: () => void }): React.JSX.Element {
   return <div id="stage-sel-story">
     <div >
       <div >
         <p>ない</p>
-        <button onClick={() => setShowStory(false)}>とじる</button>
+        <button onClick={() => close()}>とじる</button>
+      </div>
+    </div>
+  </div>
+}
+function Etc({ close }: { close: () => void }): React.JSX.Element {
+  return <div id="stage-sel-etc">
+    <div >
+      <div >
+        <div><a href="https://nabetani.hatenadiary.com/entry/game25a">制作ノート</a></div>
+        <div><a href="https://taittsuu.com/users/nabetani">鍋谷武典@タイッツー</a></div>
+        <div><a href="https://github.com/nabetani/game25a">Souce code and Licence</a></div>
+        <div><a href="https://suzuri.jp/Nabetani-T/">SUZURI - Nabetani-T</a></div>
+        <div><a href="https://taittsuu.com/search/taiitsus/hashtags?query=くるくるタイツ">タイッツー #くるくるタイツ</a></div>
+        <button onClick={() => close()}>とじる</button>
       </div>
     </div>
   </div>
@@ -128,17 +150,22 @@ function Story({ setShowStory }: { setShowStory: (_: boolean) => void }): React.
 const StageSel: React.FC<PlayingStageProps> = (
   { setStage }) => {
   const { sizeID, setSizeID } = useStageSelStore();
-  const [showStory, setShowStory] = useState<boolean>(false)
+  const [mode, setMode] = useState<ModeType>(Mode.StageSel)
 
   return (
     <div id="stage-sel">
       <SoundUI />
       <img id="title-img" src={titleImg} alt={title} />
-      <SizeSelector sizeID={sizeID} setSizeID={setSizeID} />
-      {showStory
-        ? <Story setShowStory={setShowStory} />
-        : <StageList sizeID={sizeID} setStage={setStage} />}
-      <Bottom setShowStory={setShowStory} />
+      {mode == Mode.StageSel && <div id="game-sel">
+        <SizeSelector sizeID={sizeID} setSizeID={setSizeID} />
+        <StageList sizeID={sizeID} setStage={setStage} />
+      </div>}
+      {mode == Mode.Etc && <></>}
+      {mode == Mode.Story && <Story close={() => setMode(Mode.StageSel)} />
+      }
+      {mode == Mode.Etc && <Etc close={() => setMode(Mode.StageSel)} />
+      }
+      <Bottom setMode={setMode} />
     </div>
   );
 };
