@@ -1,42 +1,288 @@
+:root {
+  --w: min(calc(100lvh / 2.2), 100lvw);
+  --h: min(100lvh, calc(100lvw*2.2));
+  --u: calc(var(--w)/100);
+  --bo: calc(var(--w)/200);
+
+  --stage-area-col: #aaa;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+h1 {
+  font-family: "Cherry Bomb One", system-ui;
+  font-size: calc(var(--u)*10);
+}
+
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: var(--w);
+  height: var(--h);
+  border: solid green 2px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+#app {
+  width: 100%;
+  height: 100%;
+  display: grid;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.size-selector {
+  display: flex;
+  align-items: flex-end;
+
+  /* 下揃え */
+  * {
+    display: inline-block;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    font-family: "Jockey One", sans-serif;
+    border-color: black;
+    border-top-left-radius: calc(var(--u)*4);
+    border-top-right-radius: calc(var(--u)*4);
+    height: calc(var(--u) * 10);
+    min-height: calc(var(--u) * 10);
   }
-  to {
-    transform: rotate(360deg);
+
+  button {
+    font-size: calc(var(--u)*6);
+    width: calc(var(--w) / 5.2);
+    padding: 0;
+    margin: 0;
+    border-color: black;
+  }
+
+  div {
+    font-size: calc(var(--u)*6);
+    width: calc(var(--w) / 5.2 * 1.2);
+    background-color: black;
+    color: white;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+
+
+div,
+button {
+  font-size: calc(var(--u)*6);
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  border: solid black calc(var(--u)*0.5);
+}
+
+button.stage-num {
+  border: solid #888 calc(var(--u)*0.5);
+  width: calc(var(--w) / 4.01 - var(--u) * 2);
+  font-family: "Jockey One", sans-serif;
+  margin: calc(var(--u) * 1);
+  border-radius: calc(var(--u) * 2);
+
+  span {
+    font-size: calc(var(--u)*3.6);
+  }
+
+}
+
+
+#sound-ui {
+  text-align: right;
+
+  * {
+    border-radius: calc(var(--u) * 3);
   }
 }
 
-.card {
-  padding: 2em;
+.sound-selected {
+  border: solid black calc(var(--u)*1);
+  margin: calc(var(--u)*1);
+  padding: calc(var(--u)*1) calc(var(--u)*3);
+  font-size: calc(var(--u)*6);
 }
 
-.read-the-docs {
-  color: #888;
+.sound-not-selected {
+  border: solid #888 calc(var(--u)*0.1);
+  font-size: calc(var(--u)*5);
+  margin: calc(var(--u)*1);
+  padding: calc(var(--u)*1) calc(var(--u)*3);
+}
+
+/* .world-svg {} */
+
+@keyframes colorHueLoop {
+  0% {
+    color: oklch(0.6 0.2 0deg);
+  }
+
+  25% {
+    color: oklch(0.6 0.2 90deg);
+  }
+
+  50% {
+    color: oklch(0.6 0.2 180deg);
+  }
+
+  75% {
+    color: oklch(0.6 0.2 270deg);
+  }
+
+  100% {
+    color: oklch(0.6 0.2 360deg);
+  }
+}
+
+@keyframes backgroundHueLoop {
+  0% {
+    background-color: oklch(0.95 0.4 0deg / 0.3);
+  }
+
+  25% {
+    background-color: oklch(0.95 0.4 90deg / 0.3);
+  }
+
+  50% {
+    background-color: oklch(0.95 0.4 180deg / 0.3);
+  }
+
+  75% {
+    background-color: oklch(0.95 0.4 270deg / 0.3);
+  }
+
+  100% {
+    background-color: oklch(0.95 0.4 360deg / 0.3);
+  }
+}
+
+#completed-wrapper {
+  position: absolute;
+  top: calc(var(--h) * 0.3);
+
+}
+
+#completed {
+  border-radius: calc(var(--u) * 4);
+  border: solid black calc(var(--u) * 1);
+  width: calc(var(--w) * 0.8);
+  margin: 10% auto auto 10%;
+  animation: backgroundHueLoop 2s linear infinite;
+
+  p {
+    width: 100%;
+    text-align: center;
+  }
+
+  #completed-head {
+    font-family: "Jockey One", sans-serif;
+    font-size: calc(var(--u) * 8);
+  }
+
+
+  #new-record {
+    font-family: "Jockey One", sans-serif;
+    font-size: calc(var(--u) * 10);
+    animation: colorHueLoop 0.5s linear infinite;
+  }
+
+  #rank-text {
+    font-family: 'Cherry Bomb One';
+    font-size: calc(var(--u) * 10);
+  }
+
+  #completed-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    button {
+      margin: calc(var(--u) * 2) calc(var(--u) * 2);
+      border-radius: calc(var(--u) * 2);
+    }
+
+    button.back-to-title {
+      font-family: "Jockey One", sans-serif;
+      font-size: calc(var(--u) * 7);
+    }
+
+    button.taiitsu {
+      font-family: 'Cherry Bomb One';
+      font-size: calc(var(--u) * 9);
+
+    }
+
+  }
+}
+
+#stage-sel {
+  font-family: "Hiragino Maru Gothic Pro", "Yu Gothic", sans-serif;
+}
+
+#game-state-panel {
+  font-family: 'Cherry Bomb One';
+  font-size: calc(var(--u)*10);
+  margin: 0;
+  padding: 0;
+
+  #score-unit {
+    font-size: calc(var(--u)*8);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  * {
+    text-align: center;
+  }
+
+}
+
+#stage-list {
+  height: calc(var(--h) * 0.5);
+  max-height: calc(var(--h) * 0.5);
+  overflow: scroll;
+  background-color: #eee;
+
+  button {
+    border: solid black calc(var(--u)*0.5);
+  }
+}
+
+.stage-info {
+  border: solid black calc(var(--u) * 1);
+  border-radius: calc(var(--u) * 3);
+  background-color: var(--stage-st-col);
+  padding: calc(var(--u) * 1) calc(var(--u) * 3);
+  margin: calc(var(--u) * 1) calc(var(--u) * 1);
+  display: grid;
+  grid-template-columns: 30fr 1fr;
+  font-family: "Jockey One", sans-serif;
+
+  div {
+    font-size: calc(var(--u) * 8);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+#game-body {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+#bg-tights {
+  grid-row: 1;
+  grid-column: 1;
+  z-index: -1;
 }
