@@ -37,6 +37,10 @@ h1 {
   display: grid;
 }
 
+#title-img {
+  width: var(--w);
+}
+
 .size-selector {
   display: flex;
   align-items: flex-end;

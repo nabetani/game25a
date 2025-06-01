@@ -6,6 +6,7 @@ import { useStageSelStore } from './stage_sel_store';
 import useWorldStore from './worldStore';
 import { newWorld } from './world';
 import { usePhaseStore } from './phaseStore';
+import titleImg from './assets/title.webp'
 
 const dayNum = (s?: string): number => {
   const d = s == null ? new Date() : new Date(s)
@@ -114,7 +115,7 @@ const StageSel: React.FC<PlayingStageProps> = (
   return (
     <div id="stage-sel">
       <SoundUI />
-      <h1>{title}</h1>
+      <img id="title-img" src={titleImg} alt={title} />
       <SizeSelector sizeID={sizeID} setSizeID={setSizeID} />
       <StageList sizeID={sizeID} setStage={setStage} />
     </div>
