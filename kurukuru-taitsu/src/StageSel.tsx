@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { gameSizeKey, gameSizeNumbers, makeStageID, Phase, title, type GameSizeValues, type PlayingStageProps, type StageIDType } from './constants';
 import { useStageStore } from './stage_store';
 import { useCurrentGameStore } from './current_game_store';
@@ -25,7 +25,7 @@ function SizeSelector(
 ): React.JSX.Element {
   const gameSizes = gameSizeNumbers()
 
-  return <div className="size-selector" >
+  return <div id="size-selector" className="size-selector" >
     {
       gameSizes.map((e, _ix) => {
         if (e == sizeID) {
@@ -108,16 +108,37 @@ function StageList({
 
 }
 
+function Bottom({ setShowStory }: { setShowStory: (_: boolean) => void }): React.JSX.Element {
+  return <div id="stage-sel-bottom">
+    <button onClick={() => setShowStory(true)}>ストーリー</button>
+  </div>
+}
+
+function Story({ setShowStory }: { setShowStory: (_: boolean) => void }): React.JSX.Element {
+  return <div id="stage-sel-story">
+    <div >
+      <div >
+        <p>ない</p>
+        <button onClick={() => setShowStory(false)}>とじる</button>
+      </div>
+    </div>
+  </div>
+}
+
 const StageSel: React.FC<PlayingStageProps> = (
   { setStage }) => {
   const { sizeID, setSizeID } = useStageSelStore();
+  const [showStory, setShowStory] = useState<boolean>(false)
 
   return (
     <div id="stage-sel">
       <SoundUI />
       <img id="title-img" src={titleImg} alt={title} />
       <SizeSelector sizeID={sizeID} setSizeID={setSizeID} />
-      <StageList sizeID={sizeID} setStage={setStage} />
+      {showStory
+        ? <Story setShowStory={setShowStory} />
+        : <StageList sizeID={sizeID} setStage={setStage} />}
+      <Bottom setShowStory={setShowStory} />
     </div>
   );
 };

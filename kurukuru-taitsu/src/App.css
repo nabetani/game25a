@@ -230,6 +230,8 @@ button.stage-num {
 
 #stage-sel {
   font-family: "Hiragino Maru Gothic Pro", "Yu Gothic", sans-serif;
+  display: grid;
+  grid-template-rows: auto auto auto calc(var(--h)*0.6) 1fr;
 }
 
 #game-state-panel {
@@ -254,13 +256,54 @@ button.stage-num {
 }
 
 #stage-list {
-  height: calc(var(--h) * 0.5);
-  max-height: calc(var(--h) * 0.5);
   overflow: scroll;
   background-color: #eee;
 
   button {
     border: solid black calc(var(--u)*0.5);
+  }
+}
+
+#stage-sel-bottom {
+  grid-row: 5;
+
+  text-align: center;
+
+  button {
+    font-family: "Cherry Bomb One", system-ui;
+    font-size: calc(var(--u)*6);
+    border-radius: calc(var(--u)*3);
+    padding: 0 calc(var(--u)*3);
+    margin: calc(var(--u)*3)
+  }
+}
+
+#stage-sel-story {
+  grid-row: 4;
+  background-image: url(./assets/bg.webp);
+
+  div {
+    margin: auto;
+    padding-top: calc(var(--h)*0.1);
+    width: fit-content;
+    height: fit-content;
+
+    div {
+      border: solid black calc(var(--u)*1);
+      text-align: center;
+      font-family: "Cherry Bomb One", system-ui;
+      font-size: calc(var(--u)*20);
+      border-radius: calc(var(--u)*3);
+      background-color: white;
+      padding: calc(var(--u)*3);
+
+      button {
+        font-family: "Cherry Bomb One", system-ui;
+        font-size: calc(var(--u)*10);
+        border-radius: calc(var(--u)*3);
+        padding: 0 calc(var(--u)*6);
+      }
+    }
   }
 }
 
