@@ -10,6 +10,7 @@ import { usePhaseStore } from './phaseStore';
 import mitt from 'mitt';
 import { useStageStore } from './stage_store';
 import { BGTights } from './BGTights';
+import { play } from './sound';
 
 type MittEvents = {
   addScore: string | null;
@@ -559,6 +560,9 @@ const Game: React.FC<GameProps> = ({ stage }) => {
     return <div>No stage selected.</div>;
   }
   const rest = countRest(world)
+  React.useEffect(() => {
+    play("bgm.game")
+  }, [])
   React.useEffect(() => {
     switch (phase) {
       case Phase.Started:
