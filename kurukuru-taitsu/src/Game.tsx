@@ -10,7 +10,8 @@ import { usePhaseStore } from './phaseStore';
 import mitt from 'mitt';
 import { useStageStore } from './stage_store';
 import { BGTights } from './BGTights';
-import { play } from './sound';
+import { play, stopAll } from './sound';
+import { useStageSelStore } from './stage_sel_store';
 
 type MittEvents = {
   addScore: string | null;
@@ -483,7 +484,10 @@ function CompletedUI(): React.JSX.Element {
         </>}
         <p id="rank-text">{rankText(currentGame.score, world.count)}</p>
         <div id="completed-buttons">
-          <button className="back-to-title" onClick={() => setPhase(Phase.StageSel)}>Back to Title</button>
+          <button className="back-to-title" onClick={() => {
+            stopAll();
+            setPhase(Phase.StageSel)
+          }}>Back to Title</button>
           <button className="taiitsu" onClick={() => window.open(url, '_blank')}>タイーツ</button>
         </div>
       </div>
@@ -552,6 +556,7 @@ const countRest = (world: WorldType): number => (
   world.cells.reduce((acc, x) => acc + (x.state == CellState.placed ? 1 : 0), 0)
 )
 const Game: React.FC<GameProps> = ({ stage }) => {
+  const { soundOn } = useStageSelStore()
   const { currentGame, updateCurrentGame } = useCurrentGameStore();
   const { world } = useWorldStore();
   const { phase, setPhase } = usePhaseStore();
@@ -561,7 +566,10 @@ const Game: React.FC<GameProps> = ({ stage }) => {
   }
   const rest = countRest(world)
   React.useEffect(() => {
-    play("bgm.game")
+    if (soundOn) {
+      play("bgm.game")
+    }
+    return () => stopAll()
   }, [])
   React.useEffect(() => {
     switch (phase) {

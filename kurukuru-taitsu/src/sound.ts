@@ -16,7 +16,6 @@ export const play = (t: string) => {
     const sound = sounds[t] ?? await (async (): Promise<((start: boolean) => void) | null> => {
       const res = await fetch(e.src);
       if (!res.ok) {
-        // console.log({ "sound.play": res })
         return null
       }
       const arrayBuffer = await res.arrayBuffer();
@@ -24,6 +23,7 @@ export const play = (t: string) => {
       const gainNode = audioContext.createGain();
       gainNode.gain.value = attrNum("volume", 1);
       const loop = attrBool("loop", false);
+      console.log({ t, volume: gainNode.gain.value, loop })
       let source: AudioBufferSourceNode | null = null
       return (start: boolean) => {
         if (start) {
@@ -42,9 +42,12 @@ export const play = (t: string) => {
       }
     })()
     if (sound != null) {
-      sounds[t] = sound
-      sound(true)
+      if (sounds[t] == null) {
+        sounds[t] = sound
+      }
     }
+    const s = sounds[t]
+    if (s != null) { s(true) }
   })()
 }
 
