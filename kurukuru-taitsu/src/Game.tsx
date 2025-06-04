@@ -46,6 +46,22 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
       combo: p.world.combo,
       specials: p.specials,
     })
+    if (world.combo < p.world.combo) {
+      if (p.world.combo < 3) {
+        play("fx.combo0")
+      } else if (p.world.combo < 6) {
+        play("fx.combo1")
+      } else {
+        play("fx.combo2")
+      }
+    } else if (0 < p.score) {
+      play("fx.three")
+    } else {
+      play("fx.touch")
+    }
+    if (p.specials.x != null || p.specials.y != null) {
+      play("fx.straight")
+    }
     setWorld(p.world);
     if (0 < (p.score ?? 0)) {
       console.log("addScore", `+${p.score}`)
