@@ -90,8 +90,8 @@ function StageList({
         }}
       >
         <div>
-          <span>best: {stage.best ?? "??"}</span>
-          <span>tried: {stage.trialCount}</span>
+          <span>Best: {stage.best ?? "??"}</span>
+          <span>Attempts: {stage.trialCount}</span>
         </div>
         <button
           className='stage-num'

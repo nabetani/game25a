@@ -26,6 +26,8 @@ const pieceColor = (dir: number): string => {
 const animationDur = "1.25s"
 const animationDurShort = "1s"
 function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
+  const { soundOn } = useStageSelStore()
+
   const { setWorld, world } = useWorldStore();
   const { currentGame, updateCurrentGame } = useCurrentGameStore();
   const c = `
@@ -48,19 +50,19 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
     })
     if (world.combo < p.world.combo) {
       if (p.world.combo < 3) {
-        play("fx.combo0")
+        play("fx.combo0", soundOn)
       } else if (p.world.combo < 6) {
-        play("fx.combo1")
+        play("fx.combo1", soundOn)
       } else {
-        play("fx.combo2")
+        play("fx.combo2", soundOn)
       }
     } else if (0 < p.score) {
-      play("fx.three")
+      play("fx.three", soundOn)
     } else {
-      play("fx.touch")
+      play("fx.touch", soundOn)
     }
     if (p.specials.x != null || p.specials.y != null) {
-      play("fx.straight")
+      play("fx.straight", soundOn)
     }
     setWorld(p.world);
     if (0 < (p.score ?? 0)) {
@@ -582,9 +584,7 @@ const Game: React.FC<GameProps> = ({ stage }) => {
   }
   const rest = countRest(world)
   React.useEffect(() => {
-    if (soundOn) {
-      play("bgm.game")
-    }
+    play("bgm.game", soundOn)
     return () => stopAll()
   }, [])
   React.useEffect(() => {

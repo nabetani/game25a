@@ -365,7 +365,7 @@ button.stage-num {
   font-family: "Jockey One", sans-serif;
 
   div {
-    font-size: calc(var(--u) * 8);
+    font-size: calc(var(--u) * 7.2);
     display: grid;
     grid-template-columns: 1fr 1fr;
   }

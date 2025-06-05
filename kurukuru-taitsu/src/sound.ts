@@ -2,7 +2,8 @@ const audioContext = new (window.AudioContext)();
 
 var sounds: { [key: string]: ((start: boolean) => void) | null } = {}
 
-export const play = (t: string) => {
+export const play = (t: string, on: boolean) => {
+  if (!on) { return }
   const e = document.getElementById(t) as HTMLAudioElement;
   const attrNum = (name: string, fallback: number): number => {
     const a = e.getAttribute(name)
