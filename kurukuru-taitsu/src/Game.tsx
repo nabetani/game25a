@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, type SVGProps } from 'react';
 import { gameSizeKey, Phase, splitStageID } from './constants';
 import type { GameSizeValues, StageIDType } from "./constants"
 import type { CurrentGame, Specials } from './current_game_store';
@@ -27,7 +27,6 @@ const animationDur = "1.25s"
 const animationDurShort = "1s"
 function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
   const { soundOn } = useStageSelStore()
-
   const { setWorld, world } = useWorldStore();
   const { currentGame, updateCurrentGame } = useCurrentGameStore();
   const c = `
@@ -78,6 +77,16 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
     const dirPrev = cell.dirPrev ?? cell.dir - hashVal(x, y, cell)
     return { opacity: 1, dirFrom: dirPrev - (cell.dir - cellDir), dirTo: cellDir }
   })()
+  const clickOpt: SVGProps<SVGPathElement> = (cell.state == CellState.placed
+    ? {
+      onPointerDown: (event: React.PointerEvent<SVGPathElement>) => {
+        event.preventDefault()
+        handleClick()
+      }
+    }
+    : {
+      style: { pointerEvents: "none" }
+    })
   return (
     <g opacity={opacity}>
       <AnimateOpacity state={cell.state} specials={currentGame.specials} />
@@ -92,10 +101,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
               fill={col}
               strokeWidth={cell.kind == world.nextKind ? 0.1 : 0}
               stroke='black'
-              onPointerDown={(event) => {
-                event.preventDefault()
-                handleClick()
-              }}
+              {...clickOpt}
             >
               <AnimateStrokeWidth cell={cell.kind} started={world.started} world={world.nextKind} />
               <AnimateColor dirFrom={dirFrom} dirTo={dirTo} cell={cell} />
@@ -401,11 +407,12 @@ function ScoreDiff(): React.JSX.Element {
     return () => { emitter.off("addScore", onAddScore) }
   }, [])
   if (text == null) { return <g id="empty?"></g> }
-  return <g key={text} opacity={0}>
+  return <g key={text} opacity={0}
+    style={{ pointerEvents: "none" }}>
     <AnimateScaleScore />
     <AnimateOpacityScore />
     <AnimateFillScore />
-    <text x={0} y={0} >{text}</text>
+    <text x={0} y={0} style={{ pointerEvents: "none" }}>{text}</text>
   </g>
 
 }
@@ -492,8 +499,32 @@ function CompletedUI(): React.JSX.Element {
   const { setPhase } = usePhaseStore();
   const text = `I scored ${currentGame.score} in Tights Click!`;
   const url = `https://taittsuu.com/share?text=${encodeURIComponent(text)}`;
+  const ref = useRef<HTMLDivElement>(null)
+  const [enabled, setEnabled] = useState<boolean>(false)
+  useEffect(() => {
+    const c = ref.current
+    if (c == null || enabled) {
+      return
+    }
+    const a = c.animate(
+      {
+        transform: [
+          `translate( 0%, 60vh)`,
+          `translate( 0%, 00%)`,
+        ]
+      },
+      {
+        duration: 800,
+        easing: "ease-out",
+        iterations: 1,
+      }
+    )
+    a.addEventListener("finish", () => {
+      setEnabled(true)
+    })
+  }, [ref.current])
   return (
-    <div id="completed-wrapper">
+    <div ref={ref} id="completed-wrapper">
       <div id="completed">
         {currentGame.newBest == true ? <>
           <p id="new-record">New Record!</p>
@@ -502,11 +533,15 @@ function CompletedUI(): React.JSX.Element {
         </>}
         <p id="rank-text">{rankText(currentGame.score, world.count)}</p>
         <div id="completed-buttons">
-          <button className="back-to-title" onClick={() => {
-            stopAll();
-            setPhase(Phase.StageSel)
-          }}>Back to Title</button>
-          <button className="taiitsu" onClick={() => window.open(url, '_blank')}>タイーツ</button>
+          <button className="back-to-title"
+            disabled={!enabled}
+            onClick={() => {
+              stopAll();
+              setPhase(Phase.StageSel)
+            }}>Back to Title</button>
+          <button className="taiitsu"
+            disabled={!enabled}
+            onClick={() => window.open(url, '_blank')}>タイーツ</button>
         </div>
       </div>
     </div>
