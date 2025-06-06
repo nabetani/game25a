@@ -82,15 +82,15 @@ export const newWorld = (ix: number, size: GameSizeValues): WorldType => {
 const getSize = (size: GameSizeValues): { width: number; height: number; spaces: number } => {
   switch (size) {
     case GameSize.Tiny:
-      return { width: 2, height: 3, spaces: 0 };
+      return { width: 3, height: 3, spaces: 0 };
     case GameSize.Small:
-      return { width: 3, height: 4, spaces: 0 };
+      return { width: 3, height: 5, spaces: 0 };
     case GameSize.Medium:
       return { width: 4, height: 5, spaces: 1 + (1 << 3) };
     case GameSize.Large:
       return { width: 4, height: 6, spaces: 0 };
     case GameSize.Huge:
-      return { width: 5, height: 7, spaces: 1 + (1 << 4) };
+      return { width: 5, height: 9, spaces: (1 + (1 << 4)) * (1 + 1024 + 1024 ** 2) };
   }
 }
 function newRNG(ix: number, width: number, height: number) {
