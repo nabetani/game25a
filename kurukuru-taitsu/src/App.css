@@ -84,6 +84,7 @@ button {
 button {
   border: solid black calc(var(--u)*0.5);
   color: black;
+  background-color: #dedede;
 }
 
 button.stage-num {
@@ -98,8 +99,6 @@ button.stage-num {
   }
 
 }
-
-
 
 .sound-selected {
   border: solid black calc(var(--u)*1);
@@ -291,6 +290,13 @@ button.stage-num {
     grid-row: 3;
     background-image: url(./assets/bg.webp);
 
+    #rule {
+      .taitsu {
+        font-family: "Cherry Bomb One", system-ui;
+        font-size: calc(var(--u)*6);
+      }
+    }
+
     div {
       margin: auto;
       padding-top: calc(var(--h)*0.1);
@@ -322,6 +328,7 @@ button.stage-num {
           font-size: calc(var(--u)*10);
           border-radius: calc(var(--u)*3);
           padding: 0 calc(var(--u)*6);
+          background-color: #dedede;
         }
       }
     }

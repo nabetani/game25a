@@ -93,13 +93,15 @@ function StageList(): React.JSX.Element {
 const Mode = {
   StageSel: 1,
   Story: 2,
-  Etc: 3
+  Etc: 3,
+  Rule: 4
 } as const
 type ModeType = typeof Mode[keyof (typeof Mode)]
 
 function Bottom({ setMode }: { setMode: (_: ModeType) => void }): React.JSX.Element {
   return <div id="stage-sel-bottom">
     <button onClick={() => setMode(Mode.Story)}>ストーリー</button>
+    <button onClick={() => setMode(Mode.Rule)}>ルール</button>
     <button onClick={() => setMode(Mode.Etc)}>いろいろ</button>
   </div>
 }
@@ -129,6 +131,36 @@ function Etc({ close }: { close: () => void }): React.JSX.Element {
   </div>
 }
 
+function TaitsuInRule(): React.JSX.Element {
+  return <>{["タ", "", "イ", "", "ツ"].map(e => (
+    e == "" ? "•" : <span className='taitsu'>{e}</span>
+  ))}</>
+}
+
+function Rule({ close }: { close: () => void }): React.JSX.Element {
+  return <div id="stage-sel-etc">
+    <div >
+      <div >
+        <div id="rule">
+          <TaitsuInRule />を順にクリックして、消していきいます。
+          <br />
+          クリックすると、適当に回ります。
+          <br />
+          <TaitsuInRule />が同じ向きだと高得点。
+          <br />
+          同じ向きが続くともっと高得点。
+          <br />
+          <TaitsuInRule />縦横一列でも高得点。
+          <br />
+          <br />
+          毎日ステージが増えます。
+        </div>
+        <button onClick={() => close()}>とじる</button>
+      </div>
+    </div>
+  </div>
+}
+
 function StageSel(): React.JSX.Element {
   const [mode, setMode] = useState<ModeType>(Mode.StageSel)
 
@@ -141,10 +173,9 @@ function StageSel(): React.JSX.Element {
         <StageList />
       </div>}
       {mode == Mode.Etc && <></>}
-      {mode == Mode.Story && <Story close={() => setMode(Mode.StageSel)} />
-      }
-      {mode == Mode.Etc && <Etc close={() => setMode(Mode.StageSel)} />
-      }
+      {mode == Mode.Story && <Story close={() => setMode(Mode.StageSel)} />}
+      {mode == Mode.Rule && <Rule close={() => setMode(Mode.StageSel)} />}
+      {mode == Mode.Etc && <Etc close={() => setMode(Mode.StageSel)} />}
       <Bottom setMode={setMode} />
     </div>
   );
