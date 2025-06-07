@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState, type SVGProps } from 'react';
 import { gameSizeKey, makeStageID, Phase, splitStageID } from './constants';
 import type { GameSizeValues } from "./constants"
-import type { CurrentGame, Specials } from './current_game_store';
+import type { CurrentGame } from './current_game_store';
 import { useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
-import type { CellType, WorldType, CellStateValues } from './world';
+import type { CellType, WorldType } from './world';
 import { CellState, progressWorld } from './world';
 import { usePhaseStore } from './phaseStore';
 import mitt from 'mitt';
@@ -128,7 +128,6 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
     Q-0.5,0.5 -0.5,0.4
     Z
     `;
-  const col = pieceColor(cell.dir & 3);
   const handleClick = () => {
     const p = progressWorld(cell, x, y, world);
     if (p == null) { return }
@@ -211,135 +210,6 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
 
 function hashVal(x: number, y: number, cell: CellType): number {
   return ((x * 29 + y * 31 + cell.dir * 37 + 41) >> 2) % 3 + 1;
-}
-
-function AnimateStrokeWidth({ cell, world, started }: { started: boolean, cell: number, world: number }): React.JSX.Element {
-  const aniRef = useRef<SVGAnimateElement>(null);
-  const cur = cell == world
-  const vani = 0 == ((cell - world + 1) % 3 + 3) % 3
-  useEffect(() => {
-    if (aniRef.current != null) {
-      aniRef.current.beginElement(); // アニメーション開始
-    }
-  }, [cur, vani]);
-  if (!cur && !vani) { return <></> }
-  const values = (cur ? [0, 0.1] : [started ? 0.1 : 0, 0]).join(";")
-  return <animate
-    ref={aniRef}
-    attributeName='stroke-width'
-    values={values}
-    dur={animationDur}
-    repeatCount={1} />
-}
-
-function AnimateTransfromRotate({ dirFrom, dirTo }: { dirFrom: number, dirTo: number }): React.JSX.Element {
-  const aniTransRef = useRef<SVGAnimateTransformElement>(null);
-  useEffect(() => {
-    if (aniTransRef.current != null) {
-      aniTransRef.current.beginElement(); // アニメーション開始
-    }
-  }, [dirFrom, dirTo]);
-  return <>
-    <animateTransform
-      ref={aniTransRef}
-      key={[dirFrom, dirTo].join(" ")}
-      attributeName="transform"
-      attributeType="XML"
-      type="rotate"
-      from={dirFrom * 90}
-      to={dirTo * 90}
-      dur={animationDur}
-      repeatCount="1" />
-  </>
-}
-
-function AnimateOpacity({ state, specials }: { specials: Specials, state: CellStateValues }): React.JSX.Element {
-  const aniRef = useRef<SVGAnimateElement>(null);
-  const aniTRef = useRef<SVGAnimateTransformElement>(null);
-  useEffect(() => {
-    if (aniRef.current != null) {
-      aniRef.current.beginElement(); // アニメーション開始
-    }
-    if (aniTRef.current != null) {
-      aniTRef.current.beginElement(); // アニメーション開始
-    }
-  }, [state]);
-  if (state != CellState.vanishing) { return <></> }
-  const scaleValues = specials.unicolor ? "1;10" : "1;2"
-  return <>
-    <animate
-      ref={aniRef}
-      attributeName='opacity'
-      values="1;0"
-      dur={animationDur}
-      repeatCount={1} />
-    <animateTransform
-      ref={aniTRef}
-      key={state}
-      dur={animationDur}
-      values={scaleValues}
-      repeatCount={1}
-      type="scale"
-
-      attributeName="transform"
-      attributeType="XML" />
-  </>
-}
-
-function AnimateTransfromShake(
-  { state }:
-    { state: CellStateValues }): React.JSX.Element {
-  const aniTransRef = useRef<SVGAnimateTransformElement>(null);
-  useEffect(() => {
-    if (aniTransRef.current != null) {
-      aniTransRef.current.beginElement(); // アニメーション開始
-    }
-  }, [state]);
-
-  if (state != CellState.fixed) { return <></> }
-
-  const shake = (): string => {
-    const n = 100
-    const r = 0.05
-    return Array.from({ length: n }).map((_, ix): string => {
-      const t0 = ix * Math.PI * 10 / n
-      const t1 = ix * Math.PI * 12 / n
-      return [
-        r * Math.sin(t0),
-        r * Math.sin(t1),
-      ].join(" ")
-    }).join(";")
-  }
-  return <animateTransform
-    ref={aniTransRef}
-    key={state}
-    dur="1s"
-    values={shake()}
-    repeatCount="indefinite"
-    attributeName="transform"
-    attributeType="XML" />
-
-}
-
-function AnimateColor({ dirFrom, dirTo }:
-  { cell: CellType, dirFrom: number, dirTo: number }): React.JSX.Element {
-  const aniColRef = useRef<SVGAnimateElement>(null);
-  useEffect(() => {
-    if (aniColRef.current != null) {
-      aniColRef.current.beginElement(); // アニメーション開始
-    }
-  }, [dirFrom, dirTo]);
-  const n = 10
-  const colors = Array.from({ length: n + 1 }).map(
-    (_, ix) => pieceColor(dirFrom + (dirTo - dirFrom) / n * ix)).join(";")
-  return <>
-    <animate
-      ref={aniColRef}
-      attributeName='fill'
-      values={colors}
-      dur={animationDur}
-      repeatCount={1} />
-  </>
 }
 
 function mapXY<T>(w: { width: number, height: number }, proc: (x: number, y: number) => T | null): T[] {
