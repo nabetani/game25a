@@ -203,7 +203,7 @@ button.stage-num {
       border-radius: calc(var(--u) * 2);
     }
 
-    button.back-to-title {
+    button.phase-control {
       font-family: "Jockey One", sans-serif;
       font-size: calc(var(--u) * 7);
     }
@@ -211,7 +211,7 @@ button.stage-num {
     button.taiitsu {
       font-family: 'Cherry Bomb One';
       font-size: calc(var(--u) * 9);
-
+      grid-column: span 2;
     }
 
   }

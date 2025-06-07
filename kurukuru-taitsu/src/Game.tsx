@@ -533,7 +533,13 @@ function CompletedUI(): React.JSX.Element {
         </>}
         <p id="rank-text">{rankText(currentGame.score, world.count)}</p>
         <div id="completed-buttons">
-          <button className="back-to-title"
+          <button className="phase-control"
+            disabled={!enabled}
+            onClick={() => {
+              stopAll();
+              setPhase(Phase.Selected)
+            }}>Try Again</button>
+          <button className="phase-control"
             disabled={!enabled}
             onClick={() => {
               stopAll();
