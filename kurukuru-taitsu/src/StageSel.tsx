@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { gameSizeKey, gameSizeNumbers, makeStageID, Phase, title } from './constants';
 import { type GameSizeValues } from './constants';
 import { useStageStore } from './stage_store';
-import { useCurrentGameStore } from './current_game_store';
 import { useStageSelStore } from './stage_sel_store';
-import useWorldStore from './worldStore';
-import { newWorld } from './world';
 import { usePhaseStore } from './phaseStore';
 import titleImg from './assets/title.webp'
 
@@ -84,7 +81,7 @@ function StageList(): React.JSX.Element {
           style={{
             backgroundColor: `oklch(0.75 0.2 ${hue}`
           }}
-          onClick={() => startGame(stageNum, sizeID)}>
+          onClick={() => startGame(stageNum)}>
           <span>Stage #</span>{stageNum}
         </button>
       </div>
