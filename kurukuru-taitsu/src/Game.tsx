@@ -25,6 +25,8 @@ const pieceColor = (dir: number): string => {
 
 function CellRotate({ children, dirFrom, dirTo }: { children: React.ReactNode, dirFrom: number, dirTo: number }): React.JSX.Element {
   const ref = useRef<SVGGElement>(null)
+  const dirToA = (dirFrom & 3) == (dirTo & 3) ? dirFrom : dirTo
+
   useEffect(() => {
     const c = ref.current
     if (c == null) {
@@ -34,11 +36,11 @@ function CellRotate({ children, dirFrom, dirTo }: { children: React.ReactNode, d
       {
         transform: [
           `rotate(${dirFrom * 90}deg)`,
-          `rotate(${dirTo * 90}deg)`,
+          `rotate(${dirToA * 90}deg)`,
         ]
       },
       {
-        duration: 800,
+        duration: 1000,
         easing: "ease-out",
         iterations: 1,
         fill: "forwards" // 終了後も最後の状態を維持
@@ -51,6 +53,36 @@ function CellRotate({ children, dirFrom, dirTo }: { children: React.ReactNode, d
   return <g
     ref={ref}
     transform={`rotate(${dirFrom * 90})`}
+  >{children}</g>
+}
+
+function CellColor({ children, dirFrom, dirTo }: { children: React.ReactNode, dirFrom: number, dirTo: number }): React.JSX.Element {
+  const ref = useRef<SVGGElement>(null)
+  const dirToA = (dirFrom & 3) == (dirTo & 3) ? dirFrom : dirTo
+  useEffect(() => {
+    const c = ref.current
+    if (c == null) {
+      return
+    }
+    const a = c.animate(
+      {
+        fill: [
+          pieceColor(dirFrom),
+          pieceColor(dirToA),
+        ]
+      },
+      {
+        duration: 1000,
+        easing: "ease-out",
+        iterations: 1,
+        fill: "forwards" // 終了後も最後の状態を維持
+      }
+    )
+    return () => a.cancel()
+  }, [ref.current])
+  return <g
+    ref={ref}
+    fill={pieceColor(dirFrom)}
   >{children}</g>
 }
 
@@ -108,6 +140,13 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
     const dirPrev = cell.dirPrev ?? cell.dir - hashVal(x, y, cell)
     return { opacity: 1, dirFrom: dirPrev - (cell.dir - cellDir), dirTo: cellDir }
   })()
+  if (x == 1 && y == 1) {
+    console.log("CellSVG",
+      ["タ", "イ", "ツ"][cell.kind] ?? "?",
+      dirFrom, dirTo,
+      cell
+    )
+  }
   const clickOpt: SVGProps<SVGPathElement> = (cell.state == CellState.placed
     ? {
       onPointerDown: (event: React.PointerEvent<SVGPathElement>) => {
@@ -118,20 +157,20 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
     : {
       style: { pointerEvents: "none" }
     })
+  const key = [dirFrom, dirTo].join("")
   return (
     <g opacity={opacity}>
-      <CellRotate key={[dirFrom, dirTo].join(">")} dirFrom={dirFrom} dirTo={dirTo}>
-        <g>
+      <CellRotate {...{ key, dirFrom, dirTo }}>
+        <CellColor {...{ key, dirFrom, dirTo }}>
           <path
             key={[dirFrom, dirTo].join(" ")}
             d={c}
-            fill={col}
-            strokeWidth={cell.kind == world.nextKind ? 0.1 : 0}
-            stroke='black'
+            strokeWidth={0}
+            stroke='none'
             {...clickOpt}
           >
           </path>
-        </g>
+        </CellColor>
         <text y={0.2} style={{ pointerEvents: "none" }}>
           {["タ", "イ", "ツ"][cell.kind] ?? "?"}
         </text>

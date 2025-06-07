@@ -167,10 +167,8 @@ export function progressWorld(
         case 3: return cy == y && cx < x
       }
     }
-    if (m()) {
-      return { ...c, dir: c.dir + rot, dirPrev: c.dir }
-    }
-    return c
+    const dRot = m() ? rot : 0
+    return { ...c, dir: c.dir + dRot, dirPrev: c.dir }
   }
   if (cell.kind == 2) {
     const newCell = { ...cell, state: CellState.vanishing };
