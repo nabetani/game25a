@@ -200,12 +200,12 @@ export function progressWorld(
   } else {
     const newCell = { ...cell, state: CellState.fixed };
     const newCells = world.cells.map((c, ix) => {
-      if (c === cell) { return newCell }
+      if (c === cell) { return { ...newCell, dirPrev: c.dir } }
       switch (c.state) {
         case CellState.vanishing:
           return { ...c, state: CellState.vanished }
         case CellState.fixed:
-          return c
+          return { ...c }
       }
       return rotCell(c, ix)
     })
