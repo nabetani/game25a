@@ -182,6 +182,14 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
       style: { pointerEvents: "none" }
     })
   const key = [dirFrom, dirTo].join("")
+  const stroke =
+    CellState.fixed <= cell.state ? {
+      strokeWidth: 0.1,
+      stroke: 'black',
+    } : {
+      strokeWidth: 0,
+      stroke: 'none',
+    }
   return (
     <CellVanish {...{ key, opFrom, opTo }}>
       <CellRotate {...{ key, dirFrom, dirTo }}>
@@ -189,8 +197,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
           <path
             key={[dirFrom, dirTo].join(" ")}
             d={c}
-            strokeWidth={0}
-            stroke='none'
+            {...stroke}
             {...clickOpt}
           >
           </path>
