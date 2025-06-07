@@ -86,6 +86,33 @@ function CellColor({ children, dirFrom, dirTo }: { children: React.ReactNode, di
   >{children}</g>
 }
 
+function CellVanish({ children, opFrom, opTo }:
+  { children: React.ReactNode, opFrom: number, opTo: number }): React.JSX.Element {
+  const ref = useRef<SVGGElement>(null)
+  useEffect(() => {
+    const c = ref.current
+    if (c == null) {
+      return
+    }
+    const a = c.animate(
+      {
+        opacity: [
+          opFrom, opTo
+        ]
+      },
+      {
+        duration: 1000,
+        iterations: 1,
+        fill: "forwards" // 終了後も最後の状態を維持
+      }
+    )
+    return () => a.cancel()
+  }, [ref.current])
+  return <g
+    ref={ref}
+    opacity={opFrom}
+  >{children}</g>
+}
 const animationDur = "1.25s"
 const animationDurShort = "1s"
 function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
@@ -132,14 +159,18 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
       emitter.emit("addScore", `+${p.score}`)
     }
   };
-  const { dirTo, dirFrom, opacity } = ((): { dirTo: number, dirFrom: number, opacity: number } => {
-    const cellDir = cell.dir & 3 + 4
-    if (CellState.vanishing <= cell.state) {
-      return { opacity: 0, dirFrom: cellDir, dirTo: cellDir + cell.kind + 1 }
-    }
-    const dirPrev = cell.dirPrev ?? cell.dir - hashVal(x, y, cell)
-    return { opacity: 1, dirFrom: dirPrev - (cell.dir - cellDir), dirTo: cellDir }
-  })()
+  const { dirTo, dirFrom, opFrom, opTo } = (
+    (): { dirTo: number, dirFrom: number, opFrom: number, opTo: number } => {
+      const cellDir = cell.dir & 3 + 4
+      const opFrom = CellState.vanishing < cell.state ? 0 : 1
+      const opTo = CellState.vanishing <= cell.state ? 0 : 1
+
+      if (CellState.vanishing <= cell.state) {
+        return { opFrom, opTo, dirFrom: cellDir, dirTo: cellDir + cell.kind + 1 }
+      }
+      const dirPrev = cell.dirPrev ?? cell.dir - hashVal(x, y, cell)
+      return { opFrom, opTo, dirFrom: dirPrev - (cell.dir - cellDir), dirTo: cellDir }
+    })()
   const clickOpt: SVGProps<SVGPathElement> = (cell.state == CellState.placed
     ? {
       onPointerDown: (event: React.PointerEvent<SVGPathElement>) => {
@@ -152,7 +183,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
     })
   const key = [dirFrom, dirTo].join("")
   return (
-    <g opacity={opacity}>
+    <CellVanish {...{ key, opFrom, opTo }}>
       <CellRotate {...{ key, dirFrom, dirTo }}>
         <CellColor {...{ key, dirFrom, dirTo }}>
           <path
@@ -168,8 +199,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
           {["タ", "イ", "ツ"][cell.kind] ?? "?"}
         </text>
       </CellRotate>
-    </g >
-  );
+    </CellVanish>);
 }
 
 function hashVal(x: number, y: number, cell: CellType): number {
