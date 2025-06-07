@@ -23,6 +23,37 @@ const pieceColor = (dir: number): string => {
   return `oklch(0.8 0.4 ${dir * 90 + 10}`
 }
 
+function CellRotate({ children, dirFrom, dirTo }: { children: React.ReactNode, dirFrom: number, dirTo: number }): React.JSX.Element {
+  const ref = useRef<SVGGElement>(null)
+  useEffect(() => {
+    const c = ref.current
+    if (c == null) {
+      return
+    }
+    const a = c.animate(
+      {
+        transform: [
+          `rotate(${dirFrom * 90}deg)`,
+          `rotate(${dirTo * 90}deg)`,
+        ]
+      },
+      {
+        duration: 800,
+        easing: "ease-out",
+        iterations: 1,
+        fill: "forwards" // 終了後も最後の状態を維持
+
+      }
+    )
+    return () => a.cancel()
+
+  }, [ref.current])
+  return <g
+    ref={ref}
+    transform={`rotate(${dirFrom * 90})`}
+  >{children}</g>
+}
+
 const animationDur = "1.25s"
 const animationDurShort = "1s"
 function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
@@ -89,29 +120,22 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
     })
   return (
     <g opacity={opacity}>
-      <AnimateOpacity state={cell.state} specials={currentGame.specials} />
-      <g>
-        <AnimateTransfromShake state={cell.state} />
-        <g transform={`rotate(${dirTo * 90})`}>
-          <AnimateTransfromRotate dirFrom={dirFrom} dirTo={dirTo} />
-          <g>
-            <path
-              key={[dirFrom, dirTo].join(" ")}
-              d={c}
-              fill={col}
-              strokeWidth={cell.kind == world.nextKind ? 0.1 : 0}
-              stroke='black'
-              {...clickOpt}
-            >
-              <AnimateStrokeWidth cell={cell.kind} started={world.started} world={world.nextKind} />
-              <AnimateColor dirFrom={dirFrom} dirTo={dirTo} cell={cell} />
-            </path>
-          </g>
-          <text y={0.2} style={{ pointerEvents: "none" }}>
-            {["タ", "イ", "ツ"][cell.kind] ?? "?"}
-          </text>
+      <CellRotate key={[dirFrom, dirTo].join(">")} dirFrom={dirFrom} dirTo={dirTo}>
+        <g>
+          <path
+            key={[dirFrom, dirTo].join(" ")}
+            d={c}
+            fill={col}
+            strokeWidth={cell.kind == world.nextKind ? 0.1 : 0}
+            stroke='black'
+            {...clickOpt}
+          >
+          </path>
         </g>
-      </g>
+        <text y={0.2} style={{ pointerEvents: "none" }}>
+          {["タ", "イ", "ツ"][cell.kind] ?? "?"}
+        </text>
+      </CellRotate>
     </g >
   );
 }
