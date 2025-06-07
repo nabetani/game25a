@@ -509,7 +509,7 @@ function CompletedUI(): React.JSX.Element {
     const a = c.animate(
       {
         transform: [
-          `translate( 0%, 60vh)`,
+          `translate( 0%, 60svh)`,
           `translate( 0%, 00%)`,
         ]
       },

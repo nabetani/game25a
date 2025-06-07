@@ -1,6 +1,6 @@
 :root {
-  --w: min(calc(100lvh / 2.2), 100lvw);
-  --h: min(100lvh, calc(100lvw*2.2));
+  --w: min(calc(100svh / 2.2), 100svw);
+  --h: min(100svh, calc(100svw*2.2));
   --u: calc(var(--w)/100);
   --bo: calc(var(--w)/200);
 
