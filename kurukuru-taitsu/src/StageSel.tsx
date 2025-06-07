@@ -43,19 +43,12 @@ function SizeSelector(): React.JSX.Element {
 
 function StageList(): React.JSX.Element {
   const { setPhase } = usePhaseStore();
-  const { stageStates, updateStageUnit } = useStageStore()
-  const { updateCurrentGame } = useCurrentGameStore();
-  const { setWorld } = useWorldStore()
+  const { stageStates } = useStageStore()
   const { sizeID, setStageIx } = useStageSelStore()
 
-  function startGame(ix: number, size: GameSizeValues) {
-    const stageID = makeStageID(ix, size);
-    const selected = stageStates.m[stageID];
-    updateStageUnit(stageID, { ...selected, trialCount: (selected?.trialCount ?? 0) + 1 });
-    updateCurrentGame({ score: 0, combo: 0 });
+  function startGame(ix: number) {
     setStageIx(ix);
-    setPhase(Phase.Started);
-    setWorld(newWorld(ix, size))
+    setPhase(Phase.Selected);
   }
 
   return <div id="stage-list">
@@ -72,7 +65,7 @@ function StageList(): React.JSX.Element {
             backgroundColor: `oklch(0.8 0.2 ${hue}`
           }}
           key={stageNum}
-          onClick={() => startGame(stageNum, sizeID)}>
+          onClick={() => startGame(stageNum)}>
           <span>Stage #</span>{stageNum}
         </button>
       }

@@ -22,9 +22,10 @@ export const gameSizeNumbers = (): number[] => {
 
 export const Phase = {
   StageSel: 1,
-  Started: 2,
-  Playing: 3,
-  Completed: 4,
+  Selected: 2,
+  Started: 3,
+  Playing: 4,
+  Completed: 5,
 } as const
 export type PhaseValues = typeof Phase[keyof typeof Phase];
 
