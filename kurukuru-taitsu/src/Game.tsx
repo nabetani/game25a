@@ -140,13 +140,6 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
     const dirPrev = cell.dirPrev ?? cell.dir - hashVal(x, y, cell)
     return { opacity: 1, dirFrom: dirPrev - (cell.dir - cellDir), dirTo: cellDir }
   })()
-  if (x == 1 && y == 1) {
-    console.log("CellSVG",
-      ["タ", "イ", "ツ"][cell.kind] ?? "?",
-      dirFrom, dirTo,
-      cell
-    )
-  }
   const clickOpt: SVGProps<SVGPathElement> = (cell.state == CellState.placed
     ? {
       onPointerDown: (event: React.PointerEvent<SVGPathElement>) => {
@@ -171,7 +164,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
           >
           </path>
         </CellColor>
-        <text y={0.2} style={{ pointerEvents: "none" }}>
+        <text y={0.4} style={{ pointerEvents: "none" }}>
           {["タ", "イ", "ツ"][cell.kind] ?? "?"}
         </text>
       </CellRotate>
@@ -511,7 +504,7 @@ function WorldSVG(): React.JSX.Element {
     >
       <g
         fontFamily='Cherry Bomb One'
-        dominantBaseline="middle" textAnchor="middle"
+        alignmentBaseline="middle" textAnchor="middle"
         fontSize={1}
       >
         {mapXY(world, (x, y) => {
