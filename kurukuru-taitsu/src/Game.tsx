@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, type SVGProps } from 'react';
-import { gameSizeKey, Phase, splitStageID } from './constants';
-import type { GameSizeValues, StageIDType } from "./constants"
+import { gameSizeKey, makeStageID, Phase, splitStageID } from './constants';
+import type { GameSizeValues } from "./constants"
 import type { CurrentGame, Specials } from './current_game_store';
 import { useCurrentGameStore } from './current_game_store';
 import useWorldStore from './worldStore';
@@ -601,22 +601,20 @@ function GameStatePanel({
 
 }
 
-interface GameProps {
-  stage: StageIDType | null;
-}
-
 const countRest = (world: WorldType): number => (
   world.cells.reduce((acc, x) => acc + (x.state == CellState.placed ? 1 : 0), 0)
 )
-const Game: React.FC<GameProps> = ({ stage }) => {
+function Game(): React.JSX.Element {
   const { soundOn } = useStageSelStore()
   const { currentGame, updateCurrentGame } = useCurrentGameStore();
   const { world } = useWorldStore();
   const { phase, setPhase } = usePhaseStore();
   const { stageStates, updateStageUnit } = useStageStore();
-  if (!stage) {
+  const { stageIx, sizeID } = useStageSelStore();
+  if (stageIx == null || stageIx < 0) {
     return <div>No stage selected.</div>;
   }
+  const stage = makeStageID(stageIx, sizeID)
   const rest = countRest(world)
   React.useEffect(() => {
     play("bgm.game", soundOn)

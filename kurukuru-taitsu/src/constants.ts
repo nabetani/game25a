@@ -32,8 +32,8 @@ console.log(Phase.StageSel)
 
 export type StageIDType = string;
 
-export const makeStageID = (course: number, size: number): StageIDType => {
-  return [course, size].join(":")
+export const makeStageID = (stageIx: number, sizeID: number): StageIDType => {
+  return [stageIx, sizeID].join(":")
 }
 
 export const splitStageID = (s: StageIDType): { course: number, size: number } => {

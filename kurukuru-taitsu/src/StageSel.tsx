@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { gameSizeKey, gameSizeNumbers, makeStageID, Phase, title, type GameSizeValues, type PlayingStageProps, type StageIDType } from './constants';
+import { gameSizeKey, gameSizeNumbers, makeStageID, Phase, title } from './constants';
+import { type GameSizeValues } from './constants';
 import { useStageStore } from './stage_store';
 import { useCurrentGameStore } from './current_game_store';
 import { useStageSelStore } from './stage_sel_store';
@@ -17,12 +18,8 @@ const stageCount = ((): number => {
   return Math.ceil(dayNum() - dayNum("2025-05-01T13:00:00+0900"))
 })()
 
-function SizeSelector(
-  { sizeID, setSizeID }: {
-    sizeID: number,
-    setSizeID: (_: GameSizeValues) => void,
-  }
-): React.JSX.Element {
+function SizeSelector(): React.JSX.Element {
+  const { sizeID, setSizeID } = useStageSelStore()
   const gameSizes = gameSizeNumbers()
 
   return <div id="size-selector" className="size-selector" >
@@ -44,24 +41,19 @@ function SizeSelector(
 
 }
 
-function StageList({
-  sizeID,
-  setStage
-}: {
-  sizeID: GameSizeValues,
-  setStage: (_: StageIDType | null) => void
-}): React.JSX.Element {
+function StageList(): React.JSX.Element {
   const { setPhase } = usePhaseStore();
   const { stageStates, updateStageUnit } = useStageStore()
   const { updateCurrentGame } = useCurrentGameStore();
   const { setWorld } = useWorldStore()
+  const { sizeID, setStageIx } = useStageSelStore()
 
   function startGame(ix: number, size: GameSizeValues) {
     const stageID = makeStageID(ix, size);
     const selected = stageStates.m[stageID];
     updateStageUnit(stageID, { ...selected, trialCount: (selected?.trialCount ?? 0) + 1 });
     updateCurrentGame({ score: 0, combo: 0 });
-    setStage(stageID);
+    setStageIx(ix);
     setPhase(Phase.Started);
     setWorld(newWorld(ix, size))
   }
@@ -147,9 +139,7 @@ function Etc({ close }: { close: () => void }): React.JSX.Element {
   </div>
 }
 
-const StageSel: React.FC<PlayingStageProps> = (
-  { setStage }) => {
-  const { sizeID, setSizeID } = useStageSelStore();
+function StageSel(): React.JSX.Element {
   const [mode, setMode] = useState<ModeType>(Mode.StageSel)
 
   return (
@@ -157,8 +147,8 @@ const StageSel: React.FC<PlayingStageProps> = (
       <SoundUI />
       <img id="title-img" src={titleImg} alt={title} />
       {mode == Mode.StageSel && <div id="game-sel">
-        <SizeSelector sizeID={sizeID} setSizeID={setSizeID} />
-        <StageList sizeID={sizeID} setStage={setStage} />
+        <SizeSelector />
+        <StageList />
       </div>}
       {mode == Mode.Etc && <></>}
       {mode == Mode.Story && <Story close={() => setMode(Mode.StageSel)} />
