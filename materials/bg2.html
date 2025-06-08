@@ -1,0 +1,66 @@
+<html>
+
+<body>
+  <svg style="width: 100svw; height: 100svw;" viewBox="-10 -10 20 20" id="svg" xmlns="http://www.w3.org/2000/svg">
+    <defs />
+    <g id="root" stroke="black" stroke-width="0.01"></g>
+  </svg>
+</body>
+<script>
+  const pathD = [
+    "M -3 0",
+    "L -3 7",
+    "L -1 7",
+    "L -1 2",
+    "L 1 2",
+    "L 1 7",
+    "L 3 7",
+    "L 3 0",
+    "Z"
+  ].join(" ")
+
+  const col = () => {
+    const lu = Math.random() * 0.2 + 0.8
+    const c = Math.random() * 0.2 + 0.1
+    const h = Math.random() * 360
+    return `oklch(${lu} ${c} ${h}deg)`
+  }
+
+  const add = (o, ix) => {
+    const defs = document.getElementsByTagName("defs")[0]
+    const id = `${Math.round(Math.random() * 2 ** 53)}`
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const lg = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
+    const s0 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+    const s1 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+    path.setAttribute("d", pathD);
+    const x = Math.random() * 30 - 15
+    const y = Math.random() * 30 - 20
+    const s = (Math.random() + 1) * 0.3
+    const r = Math.random() * 360
+    g.setAttribute("transform", [
+      `translate(${x} ${y})`,
+      `scale(${s})`,
+      `rotate(${r})`
+    ].join(" "));
+    path.setAttribute("fill", `url(#${id})`);
+    for (let i = 0; i < 2; i++) {
+      const s = [s0, s1][i]
+      s.setAttribute("offset", `${i * 100}%`)
+      s.setAttribute("stop-color", col())
+    }
+    lg.setAttribute("id", id)
+    lg.appendChild(s0)
+    lg.appendChild(s1)
+    defs.appendChild(lg)
+    g.appendChild(path);
+    o.appendChild(g);
+  }
+  const o = document.getElementById("root")
+  for (let i = 0; i < 5000; ++i) {
+    add(o, i)
+  }
+</script>
+
+</html>

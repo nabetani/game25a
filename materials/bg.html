@@ -1,0 +1,49 @@
+<html>
+
+<body>
+  <svg style="width: 100svw; height: 100svw;" viewBox="-10 -10 20 20" id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
+</body>
+<script>
+  const pathD = [
+    "M -3 0",
+    "L -3 7",
+    "L -1 7",
+    "L -1 2",
+    "L 1 2",
+    "L 1 7",
+    "L 3 7",
+    "L 3 0",
+    "Z"
+  ].join(" ")
+
+  const col = () => {
+    const lu = Math.random() * 0.2 + 0.8
+    const c = Math.random() * 0.2 + 0.1
+    const h = Math.random() * 360
+    return `oklch(${lu} ${c} ${h}deg / 0.2)`
+  }
+
+  const add = (o, ix) => {
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", pathD);
+    const x = Math.random() * 30 - 15
+    const y = Math.random() * 30 - 20
+    const s = (Math.random() + 1) * 0.2
+    const r = Math.random() * 360
+    g.setAttribute("transform", [
+      `translate(${x} ${y})`,
+      `scale(${s})`,
+      `rotate(${r})`
+    ].join(" "));
+    g.setAttribute("fill", col());
+    g.appendChild(path);
+    o.appendChild(g);
+  }
+  const o = document.getElementById("svg")
+  for (let i = 0; i < 5000; ++i) {
+    add(o, i)
+  }
+</script>
+
+</html>
