@@ -339,6 +339,23 @@ button.stage-num {
   font-size: calc(var(--u)*10);
   margin: 0;
   padding: 0;
+  position: relative;
+
+  #top-retry-button {
+    font-family: 'Cherry Bomb One';
+    font-size: calc(var(--u)*8);
+    background-color: #fff4;
+    border-radius: 0 0 calc(var(--u)*7) 0;
+    border-right: solid black calc(var(--u)*1.5);
+    border-bottom: solid black calc(var(--u)*1.5);
+    border-left: none;
+    border-top: none;
+    padding: 0 calc(var(--u)*3);
+    position: absolute;
+    color: black;
+    top: 0;
+    left: 0;
+  }
 
   #score-unit {
     font-size: calc(var(--u)*8);

@@ -540,6 +540,7 @@ function GameStatePanel({
   title: string,
   currentGame: CurrentGame
 }): React.JSX.Element {
+  const { setPhase } = usePhaseStore();
   const comboRef = useRef<HTMLParagraphElement>(null)
   const [animation, setAnimation] = useState<Animation | null>(null)
   useEffect(() => {
@@ -560,6 +561,11 @@ function GameStatePanel({
     return () => { animation != null && animation.cancel() }
   }, [comboRef.current, currentGame.combo])
   return <div id="game-state-panel">
+    <button id="top-retry-button" onClick={() => {
+      stopAll();
+      setPhase(Phase.Selected)
+    }}>︙</button>
+
     <p id="title">{title}</p>
     <p id="score-text">
       <span id="score-num">{currentGame.score}</span>
