@@ -1,7 +1,7 @@
 require 'net/ftp'
 
 HERE = File.split(__FILE__)[0]
-DEST_PATH = File.read("./deploy_path.txt").strip
+DEST_PATH = File.read(File.join(HERE,"./deploy_path.txt")).strip
 
 pp DEST_PATH
 
