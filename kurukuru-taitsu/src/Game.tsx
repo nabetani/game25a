@@ -456,11 +456,15 @@ const rankText = (score: number, count: number): string => {
   return "You Made It!"
 }
 
-function CompletedUI(): React.JSX.Element {
+function CompletedUI({ title }: { title: string }): React.JSX.Element {
   const { currentGame } = useCurrentGameStore();
   const { world } = useWorldStore();
   const { setPhase } = usePhaseStore();
-  const text = `I scored ${currentGame.score} in Tights Click!`;
+  const text = [
+    `#くるくるタイツ ${title.replace("#", "№")}`,
+    `${currentGame.score}点`,
+    window.location
+  ].join("\n");
   const url = `https://taittsuu.com/share?text=${encodeURIComponent(text)}`;
   const ref = useRef<HTMLDivElement>(null)
   const [enabled, setEnabled] = useState<boolean>(false)
@@ -644,7 +648,7 @@ function Game(): React.JSX.Element {
     <div id="game-body">
       <GameStatePanel title={title} currentGame={currentGame} />
       <WorldSVG />
-      {phase == Phase.Completed && <CompletedUI />}
+      {phase == Phase.Completed && <CompletedUI title={title} />}
     </div>
   </>;
 };
