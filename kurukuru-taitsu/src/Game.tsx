@@ -541,6 +541,7 @@ function GameStatePanel({
   currentGame: CurrentGame
 }): React.JSX.Element {
   const { setPhase } = usePhaseStore();
+  const [showRetry, setShowRetry] = useState<boolean>(false)
   const comboRef = useRef<HTMLParagraphElement>(null)
   const [animation, setAnimation] = useState<Animation | null>(null)
   useEffect(() => {
@@ -561,17 +562,34 @@ function GameStatePanel({
     return () => { animation != null && animation.cancel() }
   }, [comboRef.current, currentGame.combo])
   return <div id="game-state-panel">
-    <button id="top-retry-button" onClick={() => {
-      stopAll();
-      setPhase(Phase.Selected)
-    }}>︙</button>
-
     <p id="title">{title}</p>
     <p id="score-text">
       <span id="score-num">{currentGame.score}</span>
       <span id="score-unit">pts.</span>
     </p>
     <p id="combo" ref={comboRef}>{currentGame.combo} Combo</p>
+    {showRetry && <div id="retry-dialog-wrapper">
+      <div id="retry-dialog">
+        <button
+          className="phase-control"
+          onClick={() => {
+            stopAll();
+            setPhase(Phase.Selected)
+          }}>Try Again</button>
+        <button className="phase-control"
+          onClick={() => {
+            stopAll();
+            setPhase(Phase.StageSel)
+          }}>Back to Title</button>
+        <button
+          className="close"
+          onClick={() => { setShowRetry(false) }}
+        >X</button>
+      </div>
+    </div>}
+    <button id="top-retry-button" onClick={() => {
+      setShowRetry(!showRetry)
+    }}>︙</button>
   </div>
 
 }

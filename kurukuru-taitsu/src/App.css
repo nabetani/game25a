@@ -357,6 +357,46 @@ button.stage-num {
     left: 0;
   }
 
+  #retry-dialog-wrapper {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    margin: 0 auto auto 0;
+
+    #retry-dialog {
+      background-color: oklch(0.9 0.02 180deg);
+      margin: calc(var(--u) * 4) calc(var(--u) * 15);
+      padding: calc(var(--u) * 3);
+      border-radius: calc(var(--u) * 4);
+      border: solid black calc(var(--u) * 1);
+      display: grid;
+      grid-template-columns: 1fr;
+      position: relative;
+
+      .close {
+        position: absolute;
+        right: calc(var(--u) * 4);
+        ;
+        font-family: "Cherry Bomb One", system-ui;
+        color: red;
+        background-color: transparent;
+        border: none;
+        font-size: calc(var(--u) * 12);
+      }
+
+      .phase-control {
+        font-family: "Jockey One", sans-serif;
+        background-color: white;
+        border-radius: calc(var(--u) * 2);
+        font-size: calc(var(--u) * 8.5);
+        width: fit-content;
+        margin: calc(var(--u) * 2) auto;
+        padding: 0 calc(var(--u) * 2);
+      }
+    }
+  }
+
   #score-unit {
     font-size: calc(var(--u)*8);
   }
