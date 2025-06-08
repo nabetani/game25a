@@ -34,13 +34,21 @@ function Prepare({ children }: { children: ReactNode }): React.JSX.Element {
   return <>{children}</>
 }
 
+const preloadAudio = () => {
+  document.querySelectorAll("audio").forEach(audio => {
+    audio.load();
+  });
+}
+
+
 export function App() {
   const { phase } = usePhaseStore();
+  useEffect(() => {
+    preloadAudio()
+  }, []);
   return <Prepare>
     {
       (phase == Phase.StageSel || phase == Phase.Selected) ? <StageSel /> : <Game />
     }
   </Prepare>
-  switch (phase) {
-  }
 }
