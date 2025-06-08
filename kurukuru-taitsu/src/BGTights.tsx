@@ -61,7 +61,6 @@ export function BGTights(): React.JSX.Element {
   const count = 10
   return <div id="bg-tights">
     <svg
-      style={{ border: "solid red 1px" }}
       width={"var(--w)"}
       height={"var(--h)"}
       viewBox={viewBox}
