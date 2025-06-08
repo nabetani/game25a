@@ -419,14 +419,14 @@ function WorldSVG(): React.JSX.Element {
           if (CellState.vanishing <= cell.state) { return null }
           return placeCell(cell, x, y)
         })}
-        <g pointerEvents="none" >
-          <SameLineEffect centerXY={centerXY} />
-        </g>
         {mapXY(world, (x, y) => {
           const cell = world.cells[x + y * world.width];
           if (!(CellState.vanishing <= cell.state)) { return null }
           return placeCell(cell, x, y)
         })}
+        <g pointerEvents="none" >
+          <SameLineEffect centerXY={centerXY} />
+        </g>
       </g>
       <g
         fontFamily='Cherry Bomb One'
