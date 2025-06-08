@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { StageIDType } from "./constants";
+import { persistName, type StageIDType } from "./constants";
 
 export type StageUnit = {
   trialCount: number;
@@ -33,7 +33,7 @@ export const useStageStore = create<StageStore>()(
         })),
     }),
     {
-      name: "8nnjwst2t4", // unique name
+      name: persistName("stage-store"),
       storage: {
         getItem: (name) => {
           const value = localStorage.getItem(name);

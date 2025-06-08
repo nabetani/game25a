@@ -20,6 +20,10 @@ export const gameSizeNumbers = (): number[] => {
   );
 }
 
+export const persistName = (seed: string): string => {
+  return "8nnjwst2t4/" + seed
+}
+
 export const Phase = {
   StageSel: 1,
   Selected: 2,

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { GameSize, type GameSizeValues } from "./constants";
+import { GameSize, persistName, type GameSizeValues } from "./constants";
 
 type StageSelState = {
   stageIx: number | null,
@@ -22,7 +22,7 @@ export const useStageSelStore = create<StageSelState>()(
       setSoundOn: (soundOn: boolean) => set({ soundOn }),
     }),
     {
-      name: "stage-sel-state",
+      name: persistName("stage-sel-store"),
     }
   )
 );
