@@ -414,7 +414,8 @@ button.stage-num {
 
 #stage-list {
   overflow: scroll;
-  background-color: #eee;
+  background: url("./assets/bg2.webp");
+  background-size: cover;
 
   button {
     border: solid black calc(var(--u)*0.5);
