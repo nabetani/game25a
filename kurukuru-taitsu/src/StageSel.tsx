@@ -12,7 +12,7 @@ const dayNum = (s?: string): number => {
 }
 
 const stageCount = ((): number => {
-  return Math.ceil(dayNum() - dayNum("2025-05-01T13:00:00+0900"))
+  return Math.ceil(dayNum() - dayNum("2025-06-08T00:00:00+0900"))
 })()
 
 function SizeSelector(): React.JSX.Element {
