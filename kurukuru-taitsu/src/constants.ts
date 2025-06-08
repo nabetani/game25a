@@ -29,7 +29,7 @@ export const Phase = {
 } as const
 export type PhaseValues = typeof Phase[keyof typeof Phase];
 
-console.log(Phase.StageSel)
+// console.log(Phase.StageSel)
 
 export type StageIDType = string;
 

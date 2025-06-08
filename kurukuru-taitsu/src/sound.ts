@@ -24,7 +24,7 @@ export const play = (t: string, on: boolean) => {
       const gainNode = audioContext.createGain();
       gainNode.gain.value = attrNum("volume", 1);
       const loop = attrBool("loop", false);
-      console.log({ t, volume: gainNode.gain.value, loop })
+      // console.log({ t, volume: gainNode.gain.value, loop })
       let source: AudioBufferSourceNode | null = null
       return (start: boolean) => {
         if (start) {

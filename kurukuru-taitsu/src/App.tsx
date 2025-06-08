@@ -18,12 +18,12 @@ function Prepare({ children }: { children: ReactNode }): React.JSX.Element {
   const { setWorld } = useWorldStore()
   const { stageIx, sizeID } = useStageSelStore()
 
-  console.log("Prepare.render", phase, stageIx, sizeID)
+  // console.log("Prepare.render", phase, stageIx, sizeID)
   useEffect(() => {
-    console.log("Prepare.useEffect", phase, stageIx, sizeID)
+    // console.log("Prepare.useEffect", phase, stageIx, sizeID)
     if (phase != Phase.Selected || stageIx == null) { return }
     const stageID = makeStageID(stageIx, sizeID);
-    console.log("Prepare.useEffect.prepare!", phase, stageID)
+    // console.log("Prepare.useEffect.prepare!", phase, stageID)
     const selected = stageStates.m[stageID];
     updateStageUnit(stageID, { ...selected, trialCount: (selected?.trialCount ?? 0) + 1 });
     updateCurrentGame({ score: 0, combo: 0 });

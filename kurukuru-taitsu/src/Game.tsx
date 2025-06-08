@@ -154,7 +154,7 @@ function CellSVG({ cell, x, y }: { cell: CellType, x: number, y: number }) {
     }
     setWorld(p.world);
     if (0 < (p.score ?? 0)) {
-      console.log("addScore", `+${p.score}`)
+      // console.log("addScore", `+${p.score}`)
       emitter.emit("addScore", `+${p.score}`)
     }
   };
@@ -363,7 +363,7 @@ function ScoreDiff(): React.JSX.Element {
   const [text, setText] = useState<string | null>(null)
   useEffect(() => {
     function onAddScore(t: string | null) {
-      console.log("onAddScore", t)
+      // console.log("onAddScore", t)
       setText(t)
     }
     emitter.on("addScore", onAddScore)

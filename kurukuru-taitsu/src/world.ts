@@ -116,11 +116,11 @@ class ScoreCalculator {
     const y = (ix - x) / this.width
     this.xs.add(x)
     this.ys.add(y)
-    console.log("add dir", cell.dir, cell.dir & 3)
+    // console.log("add dir", cell.dir, cell.dir & 3)
     this.dirs.add(cell.dir & 3)
   }
   get combo(): number {
-    console.log("ScoreCalculator", "combo", this.dirs, this.xs, this)
+    // console.log("ScoreCalculator", "combo", this.dirs, this.xs, this)
     if (this.isDirUniq()) {
       return this.prevCombo + 1
     }
